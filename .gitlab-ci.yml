@@ -1,0 +1,43 @@
+cache:
+  paths:
+    - node_modules
+
+stages:
+  - build
+  - deploy
+
+build:prod:
+  image: buildkite/puppeteer:5.2.1
+  stage: build
+  only:
+    - prod
+  script:
+    - echo VUE_APP_API_URL=http://labinhomeqa-env.eba-3w3qaf5e.us-east-2.elasticbeanstalk.com > .env
+    - npm install --quiet
+    - unset CI
+    - npm run build
+  environment:
+    name: prod
+  artifacts:
+    paths:
+      - dist/
+
+deploy:prod:
+  image: nikolaik/python-nodejs:python3.7-nodejs12
+  stage: deploy
+  variables:
+    S3_BUCKET: "labinhome.com"
+    S3_ZONE: "us-east-1"
+    AWS_ACCESS_KEY_ID: $ID_AWS_ACCESS_KEY_ID
+    AWS_SECRET_ACCESS_KEY: $ID_AWS_SECRET_ACCESS_KEY
+  only:
+    - prod
+  script:
+    - pip install awscli
+    - aws s3 rm s3://$S3_BUCKET --recursive
+    - aws s3 cp ./dist/ s3://$S3_BUCKET/ --recursive --include "*" --exclude "index.html"
+    - aws s3 cp ./dist/index.html s3://$S3_BUCKET/index.html --metadata-directive REPLACE --cache-control max-age=0
+    - echo "Deploy to http://$S3_BUCKET.s3-website-$S3_ZONE.amazonaws.com"
+  environment:
+    name: prod
+    url: http://$S3_BUCKET.s3-website-$S3_ZONE.amazonaws.com

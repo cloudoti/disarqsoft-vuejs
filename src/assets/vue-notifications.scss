@@ -1,0 +1,81 @@
+// Override the variables or import a file that overrides them
+
+$vt-color-default: white;
+$vt-text-color-default: #000;
+
+$vt-border-color-info: #5bbcd8;
+$vt-color-info: $vt-color-default;
+$vt-text-color-info: $vt-text-color-default;
+
+$vt-border-color-success: #24ac71;
+$vt-color-success: $vt-color-default;
+$vt-text-color-success: $vt-text-color-default;
+
+$vt-border-color-warning: #f28705;
+$vt-color-warning: $vt-color-default;
+$vt-text-color-warning: $vt-text-color-default;
+
+$vt-border-color-error: #ff5252;
+$vt-color-error: $vt-color-default;
+$vt-text-color-error: $vt-text-color-default;
+
+// Import the regular Vue Toastification stylesheets (or create your own)
+@import 'vue-toastification/src/scss/_variables';
+@import 'vue-toastification/src/scss/_toastContainer';
+@import 'vue-toastification/src/scss/_toast';
+@import 'vue-toastification/src/scss/_closeButton';
+@import 'vue-toastification/src/scss/_progressBar';
+@import 'vue-toastification/src/scss/_icon';
+@import 'vue-toastification/src/scss/animations/_bounce';
+
+.#{$vt-namespace}__toast {
+  cursor: pointer;
+
+  &--info {
+    background-color: $vt-color-info;
+    color: $vt-text-color-info;
+
+    border-width: 1px;
+    border-color: $vt-border-color-info;
+
+    .#{$vt-namespace}__icon {
+      color: $vt-border-color-info;
+    }
+  }
+
+  &--success {
+    background-color: $vt-color-success;
+    color: $vt-text-color-success;
+
+    border-width: 1px;
+    border-color: $vt-border-color-success;
+
+    .#{$vt-namespace}__icon {
+      color: $vt-border-color-success;
+    }
+  }
+
+  &--error {
+    background-color: $vt-color-error;
+    color: $vt-text-color-error;
+
+    border-width: 1px;
+    border-color: $vt-border-color-error;
+
+    .#{$vt-namespace}__icon {
+      color: $vt-border-color-error;
+    }
+  }
+
+  &--warning {
+    background-color: $vt-color-warning;
+    color: $vt-text-color-warning;
+
+    border-width: 1px;
+    border-color: $vt-border-color-warning;
+
+    .#{$vt-namespace}__icon {
+      color: $vt-border-color-warning;
+    }
+  }
+}
