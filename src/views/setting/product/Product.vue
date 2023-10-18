@@ -42,7 +42,17 @@
       />
     </div>
     <div class="px-5 sm:px-8 lg:px-10 pt-1 pb-5">
-      <div class="md:grid grid-cols-2 gap-4">
+      <div class="md:grid grid-cols-3 gap-4">
+        <div>
+          <Input
+              label="Precio"
+              name="price"
+              autocomplete="off"
+              v-model="v$.productPrice.$model"
+              placeholder="Ingrese el precio."
+              :errors="v$.productPrice.$errors"
+          />
+        </div>
         <div>
           <Select
               label="Categoria"
@@ -97,7 +107,9 @@
 import {
   computed, defineProps, reactive, ref,
 } from 'vue';
-import { helpers, maxLength, required } from '@vuelidate/validators';
+import {
+  helpers, maxLength, minValue, required,
+} from '@vuelidate/validators';
 import { useVuelidate } from '@vuelidate/core';
 import { useToast } from 'vue-toastification';
 import { createAlert } from '@/ui/plugins/alert';
@@ -163,6 +175,7 @@ const formState = reactive({
   productCode: '',
   productName: '',
   productDescription: '',
+  productPrice: '',
   productCategory: '',
   productStatus: '',
   productObservation: '',
@@ -179,6 +192,9 @@ const rules = computed(() => ({
   },
   productDescription: {
     maxLength: helpers.withMessage(`Máximo de caracteres es 100`, maxLength(100)),
+  },
+  productPrice: {
+    minValue: helpers.withMessage(`El valor mínimo es 0.01`, minValue('0.01')),
   },
   productObservation: {
     maxLength: helpers.withMessage(`Máximo de caracteres es 100`, maxLength(100)),
@@ -202,6 +218,7 @@ const handleSubmit = async () => {
       code: formState.productCode,
       name: formState.productName,
       description: formState.productDescription,
+      price: +formState.productPrice,
       category: {
         id: category.value?.id,
       },
@@ -263,6 +280,7 @@ const mounted = async () => {
           formState.productCode = product.code!;
           formState.productName = product.name!;
           formState.productDescription = product.description!;
+          formState.productPrice = `${product.price!}`;
           formState.productObservation = product.observation!;
           category.value = product.category;
           status.value = statusList.value.find((s) => s.code === product.status);

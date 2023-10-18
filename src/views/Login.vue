@@ -1,7 +1,7 @@
 <template>
   <section
     class="w-full h-full text-gray-900 py-36 bg-center bg-cover bg-no-repeat"
-    style="background:url('https://aadcdn.msauthimages.net/dbd5a2dd-nnqpc9no96u-prram91ptcereyod0a1-qqparja8fte/logintenantbranding/0/illustration?ts=636313462442396974')">
+    style="background:url('https://electrotel.net/wp-content/uploads/2019/09/videovigilancia-en-la-empresa-hero.jpg')">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-4 flex items-center justify-center">
       <div class="hidden lg:w-3/6 lg:pr-0 pr-0">
         <h1 class="font-medium text-5xl text-black">Fácil, rápido y eficiente.</h1>
@@ -13,7 +13,7 @@
         <div>
           <img
             class="h-12 w-auto"
-            src="@/assets/logo-upn.svg"
+            src="@/assets/logo-conecta.jpeg"
             alt="Labinhome"/>
           <h2 class="mt-6 text-3xl font-extrabold text-gray-900">
             Inicia sesión en tu cuenta

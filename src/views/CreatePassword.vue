@@ -17,7 +17,7 @@
         <div>
           <img
             class="h-12 w-auto"
-            src="@/assets/logo-upn.svg"
+            src="@/assets/logo-conecta.jpeg"
             alt="Labinhome"/>
           <h2 class="mt-6 text-3xl font-extrabold text-gray-900">
             Crea tu contraseña

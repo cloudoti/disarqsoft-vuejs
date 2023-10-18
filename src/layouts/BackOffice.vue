@@ -13,7 +13,7 @@
                 <a href="#">
                   <img
                     class="block h-10 md:h-16 w-auto"
-                    src="@/assets/logo-upn.svg"
+                    src="@/assets/logo-conecta.jpeg"
                     alt="Workflow"/>
                 </a>
               </div>
