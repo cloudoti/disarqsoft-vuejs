@@ -1,4 +1,4 @@
-import api from '@/helpers/AxiosConfig.ts';
+import api from '@/helpers/AxiosConfig';
 import BaseApi from '@/data/api/BaseApi';
 import Product from '@/data/entity/Product';
 

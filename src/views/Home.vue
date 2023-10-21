@@ -41,7 +41,7 @@ export default defineComponent({
     }
 
     if (rolesUser.some((role) => [ERolesType.CONFIG_BUSINESS].includes(role))) {
-      router.push(ERouteType.PATIENT_PATH);
+      router.push(ERouteType.PRODUCT_PATH);
       return;
     }
 

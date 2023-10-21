@@ -3,7 +3,7 @@
 
   <div class="flex items-end justify-end mt-2">
     <router-link
-      :to="{name: 'newUser'}"
+      :to="{name: ERouteType.NEW_USER_NAME}"
       class="px-6 text-blue-600">
       Agregar
     </router-link>
@@ -77,6 +77,11 @@
                 {{ !row.active ? 'Inactivo' : 'Activo' }}
               </div>
             </td>
+            <td class="px-6 py-2 text-xs whitespace-nowrap flex items-center justify-center">
+              <router-link :to="{name: ERouteType.EDIT_USER_NAME, params: { id: row.id }}">
+                <PencilIcon class="h-5 w-5 text-blue-600"/>
+              </router-link>
+            </td>
           </tr>
           </tbody>
         </table>
@@ -98,6 +103,7 @@ import BreadCrumb from '@/ui/components/BreadCrumb.vue';
 import Input from '@/ui/components/Input.vue';
 import EmptyResult from '@/ui/components/table/EmptyResult.vue';
 import User from '@/data/entity/User';
+import ERouteType from '@/router/ERouteType';
 
 // region constantes y variables de la página
 const paginationUser = ref<User[]>();

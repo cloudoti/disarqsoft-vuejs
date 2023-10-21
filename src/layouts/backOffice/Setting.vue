@@ -76,7 +76,7 @@ const navigation = ref([
   },
   {
     name: 'Productos',
-    href: '/configuraciones/pacientes',
+    href: '/configuraciones/productos',
     icon: GiftIcon,
     current: false,
     show: global.isConfigBusiness(),

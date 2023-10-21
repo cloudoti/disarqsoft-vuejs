@@ -1,6 +1,18 @@
 export default class ERouteType {
   static readonly HOME: string = '/';
 
+  static readonly PRODUCT_PATH: string = '/configuraciones/productos';
+
+  static readonly PRODUCT_NAME: string = 'Producto';
+
+  static readonly NEW_PRODUCT_PATH: string = '/configuraciones/nuevo-producto';
+
+  static readonly NEW_PRODUCT_NAME: string = 'Configuracion Nuevo Producto';
+
+  static readonly EDIT_PRODUCT_PATH: string = '/configuraciones/editar-producto/:id';
+
+  static readonly EDIT_PRODUCT_NAME: string = 'Configuracion Editar Producto';
+
   static readonly ORDER_PATH: string = '/ordenes';
 
   static readonly ORDER_NAME: string = 'Ordenes';
@@ -24,18 +36,6 @@ export default class ERouteType {
   static readonly EDIT_USER_PATH: string = '/configuraciones/editar-usuario/:id';
 
   static readonly EDIT_USER_NAME: string = 'editUser';
-
-  static readonly PATIENT_PATH: string = '/configuraciones/pacientes';
-
-  static readonly PATIENT_NAME: string = 'Paciente';
-
-  static readonly NEW_PATIENT_PATH: string = '/configuraciones/nuevo-paciente';
-
-  static readonly NEW_PATIENT_NAME: string = 'Configuracion Nuevo Paciente';
-
-  static readonly EDIT_PATIENT_PATH: string = '/configuraciones/editar-paciente/:id';
-
-  static readonly EDIT_PATIENT_NAME: string = 'Configuracion Editar Paciente';
 
   static readonly ACCOUNT_PATH: string = '/cuenta';
 

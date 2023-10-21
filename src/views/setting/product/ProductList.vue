@@ -4,7 +4,7 @@
   <div class="flex items-end justify-end mt-2">
 
     <router-link
-      :to="{name: 'Configuracion Nuevo Paciente'}"
+      :to="{name: ERouteType.NEW_PRODUCT_NAME}"
       class="px-6 text-blue-600">
       Agregar
     </router-link>
@@ -91,7 +91,7 @@
               </div>
             </td>
             <td class="px-6 py-2 text-xs whitespace-nowrap flex items-center justify-center">
-              <router-link :to="{name: 'Configuracion Editar Paciente', params: { id: row.id }}">
+              <router-link :to="{name: ERouteType.EDIT_PRODUCT_NAME, params: { id: row.id }}">
                 <PencilIcon class="h-5 w-5 text-blue-600"/>
               </router-link>
             </td>
@@ -114,6 +114,7 @@ import BreadCrumb from '@/ui/components/BreadCrumb.vue';
 import Input from '@/ui/components/Input.vue';
 import EmptyResult from '@/ui/components/table/EmptyResult.vue';
 import Product from '@/data/entity/Product';
+import ERouteType from '@/router/ERouteType';
 
 const paginationPatient = ref<Product[]>();
 const search = ref('');

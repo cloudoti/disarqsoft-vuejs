@@ -102,7 +102,7 @@ if (auth?.authenticate) {
   } else if (global.isAdmin()) {
     router.push(ERouteType.USER_PATH);
   } else if (global.isConfigBusiness()) {
-    router.push(ERouteType.PATIENT_PATH);
+    router.push(ERouteType.PRODUCT_PATH);
   }
 }
 

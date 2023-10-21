@@ -2,10 +2,11 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import Home from '@/views/Home.vue';
 import WorkTray from '@/views/workTray/WorkTray.vue';
 import WorkOrder from '@/views/workOrder/WorkOrder.vue';
-import Patient from '@/views/setting/product/Product.vue';
-import PatientList from '@/views/setting/product/ProductList.vue';
+import Product from '@/views/setting/product/Product.vue';
+import ProductList from '@/views/setting/product/ProductList.vue';
 import Setting from '@/layouts/backOffice/Setting.vue';
 import Account from '@/layouts/account/Account.vue';
+import User from '@/views/setting/user/User.vue';
 import UserList from '@/views/setting/user/UserList.vue';
 import Storage from '@/data/global';
 import ERolesType from '@/data/entity/enums/ERolesType';
@@ -15,19 +16,19 @@ const rolesUser = Storage.auth.roles === undefined ? [] : Storage.auth.roles;
 
 const childConfiguration = [
   {
-    path: ERouteType.PATIENT_PATH,
-    name: ERouteType.PATIENT_NAME,
-    component: PatientList,
+    path: ERouteType.PRODUCT_PATH,
+    name: ERouteType.PRODUCT_NAME,
+    component: ProductList,
   },
   {
-    path: ERouteType.NEW_PATIENT_PATH,
-    name: ERouteType.NEW_PATIENT_NAME,
-    component: Patient,
+    path: ERouteType.NEW_PRODUCT_PATH,
+    name: ERouteType.NEW_PRODUCT_NAME,
+    component: Product,
   },
   {
-    path: ERouteType.EDIT_PATIENT_PATH,
-    name: ERouteType.EDIT_PATIENT_NAME,
-    component: Patient,
+    path: ERouteType.EDIT_PRODUCT_PATH,
+    name: ERouteType.EDIT_PRODUCT_NAME,
+    component: Product,
     props: true,
   },
   {
@@ -35,20 +36,31 @@ const childConfiguration = [
     name: ERouteType.USER_NAME,
     component: UserList,
   },
+  {
+    path: ERouteType.NEW_USER_PATH,
+    name: ERouteType.NEW_USER_NAME,
+    component: User,
+  },
+  {
+    path: ERouteType.EDIT_USER_PATH,
+    name: ERouteType.EDIT_USER_NAME,
+    component: User,
+    props: true,
+  },
 ];
 
 const fnChildConfiguration = (x) => {
   let valid = false;
 
-  if (x.path === ERouteType.PATIENT_PATH && rolesUser.includes(ERolesType.CONFIG_BUSINESS)) {
+  if (x.path === ERouteType.PRODUCT_PATH && rolesUser.includes(ERolesType.CONFIG_BUSINESS)) {
     valid = true;
   }
 
-  if (x.path === ERouteType.NEW_PATIENT_PATH && rolesUser.includes(ERolesType.CONFIG_BUSINESS)) {
+  if (x.path === ERouteType.NEW_PRODUCT_PATH && rolesUser.includes(ERolesType.CONFIG_BUSINESS)) {
     valid = true;
   }
 
-  if (x.path === ERouteType.EDIT_PATIENT_PATH && rolesUser.includes(ERolesType.CONFIG_BUSINESS)) {
+  if (x.path === ERouteType.EDIT_PRODUCT_PATH && rolesUser.includes(ERolesType.CONFIG_BUSINESS)) {
     valid = true;
   }
 
