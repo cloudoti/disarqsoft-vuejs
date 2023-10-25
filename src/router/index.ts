@@ -11,6 +11,8 @@ import UserList from '@/views/setting/user/UserList.vue';
 import Storage from '@/data/global';
 import ERolesType from '@/data/entity/enums/ERolesType';
 import ERouteType from '@/router/ERouteType';
+import Client from '@/views/setting/client/Client.vue';
+import ClientList from '@/views/setting/client/ClientList.vue';
 
 const rolesUser = Storage.auth.roles === undefined ? [] : Storage.auth.roles;
 
@@ -47,6 +49,22 @@ const childConfiguration = [
     component: User,
     props: true,
   },
+  {
+    path: ERouteType.CLIENT_PATH,
+    name: ERouteType.CLIENT_NAME,
+    component: ClientList,
+  },
+  {
+    path: ERouteType.NEW_CLIENT_PATH,
+    name: ERouteType.NEW_CLIENT_NAME,
+    component: Client,
+  },
+  {
+    path: ERouteType.EDIT_CLIENT_PATH,
+    name: ERouteType.EDIT_CLIENT_NAME,
+    component: Client,
+    props: true,
+  },
 ];
 
 const fnChildConfiguration = (x) => {
@@ -73,6 +91,18 @@ const fnChildConfiguration = (x) => {
   }
 
   if (x.path === ERouteType.EDIT_USER_PATH && rolesUser.includes(ERolesType.SUPER_ADMIN)) {
+    valid = true;
+  }
+
+  if (x.path === ERouteType.CLIENT_PATH && rolesUser.includes(ERolesType.SUPER_ADMIN)) {
+    valid = true;
+  }
+
+  if (x.path === ERouteType.NEW_CLIENT_PATH && rolesUser.includes(ERolesType.SUPER_ADMIN)) {
+    valid = true;
+  }
+
+  if (x.path === ERouteType.EDIT_CLIENT_PATH && rolesUser.includes(ERolesType.SUPER_ADMIN)) {
     valid = true;
   }
 

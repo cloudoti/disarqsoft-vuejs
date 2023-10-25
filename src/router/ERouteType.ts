@@ -37,6 +37,18 @@ export default class ERouteType {
 
   static readonly EDIT_USER_NAME: string = 'editUser';
 
+  static readonly CLIENT_PATH: string = '/configuraciones/clientes';
+
+  static readonly CLIENT_NAME: string = 'clientes';
+
+  static readonly NEW_CLIENT_PATH: string = '/configuraciones/nuevo-cliente';
+
+  static readonly NEW_CLIENT_NAME: string = 'newClient';
+
+  static readonly EDIT_CLIENT_PATH: string = '/configuraciones/editar-cliente/:id';
+
+  static readonly EDIT_CLIENT_NAME: string = 'editClient';
+
   static readonly ACCOUNT_PATH: string = '/cuenta';
 
   static readonly ACCOUNT_NAME: string = 'Cuenta';

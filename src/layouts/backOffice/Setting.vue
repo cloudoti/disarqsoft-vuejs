@@ -54,6 +54,7 @@ import {
 import { inject, ref } from 'vue';
 import Store from '@/data/Store';
 import global from '@/data/global';
+import ERouteType from '@/router/ERouteType';
 
 const {
   auth,
@@ -69,15 +70,22 @@ if (auth?.authenticate) {
 const navigation = ref([
   {
     name: 'Usuarios',
-    href: '/configuraciones/usuarios',
+    href: ERouteType.USER_PATH,
     icon: IdentificationIcon,
     current: false,
     show: global.isSuperAdmin(),
   },
   {
     name: 'Productos',
-    href: '/configuraciones/productos',
+    href: ERouteType.PRODUCT_PATH,
     icon: GiftIcon,
+    current: false,
+    show: global.isConfigBusiness(),
+  },
+  {
+    name: 'Clientes',
+    href: ERouteType.CLIENT_PATH,
+    icon: UsersIcon,
     current: false,
     show: global.isConfigBusiness(),
   },
