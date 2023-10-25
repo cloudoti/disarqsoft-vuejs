@@ -10,18 +10,22 @@
     <div class="px-5 sm:px-8 lg:px-10 py-5">
       <div class="grid grid-cols-3 gap-4">
         <div>
-          <Select
-              label="Client"
-              name="client"
-              v-model="client"
+          <Autocomplete
+              label="Cliente"
+              placeholder="Cliente (nombre ó documento)"
+              v-bind:suggestions="filterClientList"
+              v-model="clientName"
+              v-bind:selected-item="selectClient"
+              v-on:change="getClientList"
               :required="true"
-              :options="clientList"
+              :show-empty-result="false"
               :disabled="disableOfEdit"
+              :debounce="500"
           >
-            <template #optionContent="item">
+            <template #messageResult="item">
               {{ item.item.name }}
             </template>
-          </Select>
+          </Autocomplete>
         </div>
         <div>
           <Input
@@ -138,6 +142,7 @@ import VehiclesAPI from '@/data/api/VehiclesAPI';
 import ClientsAPI from '@/data/api/ClientsAPI';
 import Vehicle from '@/data/entity/Vehicle';
 import Client from '@/data/entity/Client';
+import Autocomplete from '@/ui/components/Autocomplete.vue';
 
 let user: Vehicle;
 const disableOfEdit = ref(false);
@@ -171,9 +176,11 @@ const statusList = ref<Status[]>([{
 }]);
 const status = ref<Status>();
 
+const clientName = ref('');
 const client = ref<Client>();
 
 const clientList = ref<Client[]>();
+const filterClientList = ref<Client[]>();
 
 const btnName = ref('Agregar vehículo');
 const props = defineProps({
@@ -223,10 +230,21 @@ const rules = computed(() => ({
 
 const v$ = useVuelidate(rules, formState, { $autoDirty: true });
 
-const btnAcceptDisable = computed(() => {
-  console.log(v$.value.$errors);
-  return v$.value.$invalid;
-});
+const btnAcceptDisable = computed(() => v$.value.$invalid);
+
+const selectClient = (item) => {
+  client.value = item;
+  clientName.value = `${item.name} ${item.fatherLastName} ${item.motherLastName}`;
+};
+
+const getClientList = () => {
+  if (!clientName.value) {
+    return;
+  }
+
+  filterClientList.value = clientList.value?.filter((c) => `${c.nie}`.toUpperCase().includes(`${clientName.value}`.toUpperCase())
+      || `${c.name} ${c.fatherLastName} ${c.motherLastName}`.toUpperCase().includes(`${clientName.value}`.toUpperCase()));
+};
 
 const handleSubmit = async () => {
   loadingButton.value = true;
@@ -302,6 +320,7 @@ const mounted = async () => {
         user = pat;
 
         if (user.id! > 0) {
+          selectClient(user.client);
           type.value = typeList.value.find((s) => s.code === user.type);
           client.value = clientList.value?.find((s) => s.id === user.client?.id);
           formState.vehicleVehicleRegistration = user.vehicleRegistration!;
