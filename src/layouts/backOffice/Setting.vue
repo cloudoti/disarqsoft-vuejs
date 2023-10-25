@@ -41,17 +41,12 @@
 
 <script setup lang="ts">
 import {
-  BadgeCheckIcon,
-  BeakerIcon,
   IdentificationIcon,
-  LibraryIcon,
-  OfficeBuildingIcon,
-  UserGroupIcon,
   UsersIcon,
-  ClipboardListIcon,
   GiftIcon,
 } from '@heroicons/vue/outline';
 import { inject, ref } from 'vue';
+import { CubeTransparentIcon } from '@heroicons/vue/solid';
 import Store from '@/data/Store';
 import global from '@/data/global';
 import ERouteType from '@/router/ERouteType';
@@ -86,6 +81,13 @@ const navigation = ref([
     name: 'Clientes',
     href: ERouteType.CLIENT_PATH,
     icon: UsersIcon,
+    current: false,
+    show: global.isConfigBusiness(),
+  },
+  {
+    name: 'Vehículos',
+    href: ERouteType.VEHICLE_PATH,
+    icon: CubeTransparentIcon,
     current: false,
     show: global.isConfigBusiness(),
   },

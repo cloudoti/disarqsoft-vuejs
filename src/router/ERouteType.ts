@@ -49,6 +49,18 @@ export default class ERouteType {
 
   static readonly EDIT_CLIENT_NAME: string = 'editClient';
 
+  static readonly VEHICLE_PATH: string = '/configuraciones/vehiculos';
+
+  static readonly VEHICLE_NAME: string = 'vehículos';
+
+  static readonly NEW_VEHICLE_PATH: string = '/configuraciones/nuevo-vehiculo';
+
+  static readonly NEW_VEHICLE_NAME: string = 'newVehicle';
+
+  static readonly EDIT_VEHICLE_PATH: string = '/configuraciones/editar-vehiculo/:id';
+
+  static readonly EDIT_VEHICLE_NAME: string = 'editVehicle';
+
   static readonly ACCOUNT_PATH: string = '/cuenta';
 
   static readonly ACCOUNT_NAME: string = 'Cuenta';
