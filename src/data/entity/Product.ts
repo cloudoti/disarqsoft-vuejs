@@ -1,21 +1,13 @@
-import Category from '@/data/entity/Category';
+import Catalog from '@/data/entity/Catalog';
 
 export default class Product {
-  id?: number;
+    id?: number;
 
-  code?: string;
+    name?: string;
 
-  name?: string;
+    price?: number;
 
-  description?: string;
+    typeService?: Catalog;
 
-  price?: number;
-
-  category?: Category;
-
-  type?: string;
-
-  status?: string;
-
-  observation?: string;
+    active?: boolean;
 }

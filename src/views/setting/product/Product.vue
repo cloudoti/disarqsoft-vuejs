@@ -8,37 +8,14 @@
         :show="loadingProduct"
         size="10"/>
     <div class="px-5 sm:px-8 lg:px-10 py-5">
-      <div class="grid grid-cols-2 gap-4">
-        <Input
-            label="Código"
-            name="code"
-            autocomplete="off"
-            v-model="v$.productCode.$model"
-            placeholder="Ingrese código."
-            :required="true"
-            :errors="v$.productCode.$errors"
-        />
-        <div>
-          <Input
-              label="Nombre"
-              name="name"
-              autocomplete="off"
-              v-model="v$.productName.$model"
-              placeholder="Ingrese el nombres."
-              :required="true"
-              :errors="v$.productName.$errors"
-          />
-        </div>
-      </div>
-    </div>
-    <div class="px-5 sm:px-8 lg:px-10 py-5">
       <Input
-          label="Descripción"
-          name="description"
+          label="Nombre"
+          name="name"
           autocomplete="off"
-          v-model="v$.productDescription.$model"
-          placeholder="Ingrese la descripción."
-          :errors="v$.productDescription.$errors"
+          v-model="v$.productName.$model"
+          placeholder="Ingrese el nombres."
+          :required="true"
+          :errors="v$.productName.$errors"
       />
     </div>
     <div class="px-5 sm:px-8 lg:px-10 pt-1 pb-5">
@@ -55,11 +32,11 @@
         </div>
         <div>
           <Select
-              label="Categoria"
-              name="categorySelect"
-              v-model="category"
+              label="Typo de servicio"
+              name="typeServiceSelect"
+              v-model="typeService"
               :required="true"
-              :options="categories"
+              :options="typeServiceList"
               :disabled="disableOfEdit"
           >
             <template #optionContent="item">
@@ -82,16 +59,6 @@
           </Select>
         </div>
       </div>
-    </div>
-    <div class="px-5 sm:px-8 lg:px-10 py-5">
-      <TextArea
-          label="Observacion"
-          name="observation"
-          autocomplete="off"
-          v-model="v$.productObservation.$model"
-          placeholder="Observaciones"
-          :errors="v$.productObservation.$errors"
-      />
     </div>
   </form>
   <div class="px-5 sm:px-8 lg:px-10 py-5 text-right">
@@ -120,12 +87,11 @@ import router from '@/router';
 import Button from '@/ui/components/Button.vue';
 import Loading from '@/ui/components/Loading.vue';
 import Input from '@/ui/components/Input.vue';
-import TextArea from '@/ui/components/TextArea.vue';
 import Select from '@/ui/components/Select.vue';
 import Product from '@/data/entity/Product';
-import Category from '@/data/entity/Category';
+import Catalog from '@/data/entity/Catalog';
 import Status from '@/data/entity/Status';
-import CategoryAPI from '@/data/api/CategoryAPI';
+import TypeServicesAPI from '@/data/api/TypeServicesAPI';
 
 let product: Product;
 const disableOfEdit = ref(false);
@@ -135,19 +101,15 @@ const alert = createAlert();
 
 const loadingProduct = ref(false);
 const loadingButton = ref(false);
-const categories = ref<Category[]>([]);
-const category = ref<Category>();
+const typeServiceList = ref<Catalog[]>([]);
+const typeService = ref<Catalog>();
 const statusList = ref<Status[]>([{
-  code: 'B',
-  name: 'Bueno',
+  code: 'true',
+  name: 'Activo',
 },
 {
-  code: 'R',
-  name: 'Regular',
-},
-{
-  code: 'D',
-  name: 'Defectuoso',
+  code: 'false',
+  name: 'Inactivo',
 }]);
 const status = ref<Status>();
 
@@ -182,22 +144,12 @@ const formState = reactive({
 });
 
 const rules = computed(() => ({
-  productCode: {
-    required: helpers.withMessage('Código del producto es obligatorio', required),
-    maxLength: helpers.withMessage(`Máximo de caracteres es 20`, maxLength(20)),
-  },
   productName: {
     required: helpers.withMessage('Nombre del producto es obligatorio', required),
     maxLength: helpers.withMessage(`Máximo de caracteres es 100`, maxLength(100)),
   },
-  productDescription: {
-    maxLength: helpers.withMessage(`Máximo de caracteres es 100`, maxLength(100)),
-  },
   productPrice: {
     minValue: helpers.withMessage(`El valor mínimo es 0.01`, minValue('0.01')),
-  },
-  productObservation: {
-    maxLength: helpers.withMessage(`Máximo de caracteres es 100`, maxLength(100)),
   },
 }));
 
@@ -215,15 +167,12 @@ const handleSubmit = async () => {
     toast.warning('Los datos ingresados no son correctos');
   } else {
     product = {
-      code: formState.productCode,
       name: formState.productName,
-      description: formState.productDescription,
       price: +formState.productPrice,
-      category: {
-        id: category.value?.id,
+      typeService: {
+        id: typeService?.value?.id,
       },
-      status: status.value?.code,
-      observation: formState.productObservation,
+      active: Boolean(status.value?.code),
     };
     if (+props.id > 0) {
       product.id = +props.id;
@@ -264,7 +213,7 @@ const mounted = async () => {
   loadingProduct.value = true;
   const promises: Promise<any>[] = [];
 
-  promises.push(CategoryAPI.ListCategory());
+  promises.push(TypeServicesAPI.List());
 
   if (+props.id > 0) {
     promises.push(PatientsAPI.GetById(+props.id));
@@ -273,17 +222,14 @@ const mounted = async () => {
     .then((values) => {
       const [listCategory, pat] = values;
       // Se obtiene el resultado de la primera promesa
-      categories.value = listCategory;
+      typeServiceList.value = listCategory;
       if (+props.id > 0) {
         product = pat;
         if (product.id! > 0) {
-          formState.productCode = product.code!;
           formState.productName = product.name!;
-          formState.productDescription = product.description!;
           formState.productPrice = `${product.price!}`;
-          formState.productObservation = product.observation!;
-          category.value = product.category;
-          status.value = statusList.value.find((s) => s.code === product.status);
+          typeService.value = product.typeService;
+          status.value = statusList.value.find((s) => Boolean(s.code) === product.active);
           btnName.value = 'Editar producto';
         }
       }

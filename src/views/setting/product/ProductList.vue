@@ -44,21 +44,14 @@
           <thead class="bg-gray-50">
           <tr>
             <th
-              style="width: 45%;"
-              scope="col"
-              class="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider"
-            >
-              Codigo
-            </th>
-            <th
-              style="width: 45%;"
+              style="width: 60%;"
               scope="col"
               class="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider"
             >
               Nombre
             </th>
             <th
-              style="width: 10%;"
+              style="width: 20%;"
               scope="col"
               class="px-6 py-3 text-center text-xs font-medium text-black uppercase tracking-wider"
             >
@@ -72,22 +65,14 @@
           <tr
             v-for="row in paginationPatient"
             :key="row.id">
-            <td class="px-6 py-2 text-left text-xs whitespace-nowrap">
-              <div class="text-sm font-medium">
-                {{ row.code }}
-              </div>
-            </td>
             <td class="px-6 py-2 text-left text-xs whitespace-nowrap align-top">
               <div class="text-sm font-medium">
                 {{ row.name }}
               </div>
-              <div class="text-sm text-gray-500">
-                {{ row.description }}
-              </div>
             </td>
             <td class="px-6 py-2 text-left text-xs whitespace-nowrap align-top">
               <div class="text-sm font-medium">
-                {{ row.category.name }}
+                {{ row.typeService?.name }}
               </div>
             </td>
             <td class="px-6 py-2 text-xs whitespace-nowrap flex items-center justify-center">
