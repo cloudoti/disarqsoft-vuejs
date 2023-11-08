@@ -1,6 +1,6 @@
 <template>
   <div
-    class="relative border border-gray-300 rounded-md px-3 py-1 shadow-sm focus-within:ring-1"
+    class="border border-gray-300 rounded-md px-3 py-1 shadow-sm focus-within:ring-1"
     :class="[
       this.$attrs.disabled ? 'bg-gray-100' : 'bg-' + bgColor,
       (errors?.length??0) == 0 ? 'focus-within:ring-blue-600 focus-within:border-blue-600' :
@@ -8,7 +8,7 @@
     ]">
     <label
       :for="label??'none'"
-      class="absolute -top-2 left-2 -mt-px inline-block px-1 text-xs font-medium text-gray-900"
+      class="-top-2 left-2 -mt-px inline-block px-1 text-xs font-medium text-gray-900"
       :class="['bg-' + bgColor]">
       {{ required ? '(*) ' : '' }} {{ label }}</label>
     <div

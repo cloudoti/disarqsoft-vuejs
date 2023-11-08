@@ -21,6 +21,14 @@ export default class ERouteType {
 
   static readonly NEW_ORDER_NAME: string = 'Nueva Orden';
 
+  static readonly QUOTATION_PATH: string = '/cotizaciones';
+
+  static readonly QUOTATION_NAME: string = 'Cotizaciones';
+
+  static readonly NEW_QUOTATION_PATH: string = '/nueva-cotizacion';
+
+  static readonly NEW_QUOTATION_NAME: string = 'Nueva Cotización';
+
   static readonly CONFIGURATIONS_PATH: string = '/configuraciones';
 
   static readonly CONFIGURATIONS_NAME: string = 'Configuraciones';

@@ -201,7 +201,7 @@ import {
 
 import {
   UserAddIcon,
-  InboxInIcon,
+  InboxInIcon, CalculatorIcon,
 } from '@heroicons/vue/solid';
 
 import {
@@ -236,6 +236,13 @@ const appNavigation = ref([
     name: 'Bandeja',
     href: '/ordenes',
     icon: ClipboardListIcon,
+    current: false,
+    show: true,
+  },
+  {
+    name: 'Cotizaciones',
+    href: '/cotizaciones',
+    icon: CalculatorIcon,
     current: false,
     show: true,
   },

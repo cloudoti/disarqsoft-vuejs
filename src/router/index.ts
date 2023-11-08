@@ -15,6 +15,8 @@ import Client from '@/views/setting/client/Client.vue';
 import ClientList from '@/views/setting/client/ClientList.vue';
 import VehicleList from '@/views/setting/vehicle/VehicleList.vue';
 import Vehicle from '@/views/setting/vehicle/Vehicle.vue';
+import Quotation from '@/views/quotation/Quotation.vue';
+import QuotationList from '@/views/quotation/QuotationList.vue';
 
 const rolesUser = Storage.auth.roles === undefined ? [] : Storage.auth.roles;
 
@@ -171,6 +173,16 @@ const childHome = [
     name: ERouteType.NEW_ORDER_NAME,
     component: WorkOrder,
   },
+  {
+    path: ERouteType.QUOTATION_PATH,
+    name: ERouteType.QUOTATION_NAME,
+    component: QuotationList,
+  },
+  {
+    path: ERouteType.NEW_QUOTATION_PATH,
+    name: ERouteType.NEW_QUOTATION_NAME,
+    component: Quotation,
+  },
 ];
 
 const fnChildHome = (x) => {
@@ -181,6 +193,12 @@ const fnChildHome = (x) => {
     valid = true;
   } else if (x.path === ERouteType.NEW_ORDER_PATH
         && rolesUser.some((role) => [ERolesType.REGISTER_ORDERS].includes(role))) {
+    valid = true;
+  } else if (x.path === ERouteType.QUOTATION_PATH
+      && rolesUser.some((role) => [ERolesType.REGISTER_ORDERS].includes(role))) {
+    valid = true;
+  } else if (x.path === ERouteType.NEW_QUOTATION_PATH
+      && rolesUser.some((role) => [ERolesType.REGISTER_ORDERS].includes(role))) {
     valid = true;
   }
 

@@ -1,7 +1,7 @@
 <template>
   <section
-    class="w-full h-full text-gray-900 py-36 bg-center bg-cover bg-no-repeat"
-    style="background:url('https://electrotel.net/wp-content/uploads/2019/09/videovigilancia-en-la-empresa-hero.jpg')">
+id="login-bg"
+    class="w-full h-full text-gray-900 py-36 bg-center bg-cover bg-no-repeat">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-4 flex items-center justify-center">
       <div class="hidden lg:w-3/6 lg:pr-0 pr-0">
         <h1 class="font-medium text-5xl text-black">Fácil, rápido y eficiente.</h1>

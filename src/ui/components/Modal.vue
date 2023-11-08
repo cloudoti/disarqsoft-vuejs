@@ -38,7 +38,7 @@
               v-if="!hideClose"
               aria-label="close"
               class="absolute top-0 right-0 text-3xl text-gray-500 mt-2 mx-4"
-              @click="close"
+              @click="closeModal"
             >
               ×
             </button>
@@ -83,6 +83,10 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  close: {
+    required: true,
+    type: Function,
+  },
 });
 
 const emit = defineEmits(['update:modelValue']);
@@ -93,6 +97,7 @@ const model = computed({
 });
 
 watch(model, (newVal, _) => {
+  console.log('oeeee', newVal);
   if (newVal) {
     return document.querySelector('body')!
       .classList
@@ -103,13 +108,13 @@ watch(model, (newVal, _) => {
     .remove('overflow-hidden');
 });
 
-const close = () => {
-  model.value = false;
+const closeModal = () => {
+  props.close();
 };
 
 const closeIfShown = () => {
   if (!props.hideClose && props.dismissible) {
-    close();
+    closeModal();
   }
 };
 
@@ -117,7 +122,7 @@ const closeIfShown = () => {
   if (!props.hideClose && props.dismissible) {
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
-        close();
+        closeModal();
       }
     });
   }
