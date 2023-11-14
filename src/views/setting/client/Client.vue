@@ -79,6 +79,7 @@
               name="companyName"
               autocomplete="off"
               v-model="v$.clientCompanyName.$model"
+              :required="typeNie?.code === 'RUC'"
               placeholder="Ingrese el nombre de la empresa."
               :errors="v$.clientCompanyName.$errors"
           />
@@ -138,7 +139,7 @@ import {
   computed, defineProps, reactive, ref,
 } from 'vue';
 import {
-  email, helpers, maxLength, required,
+  email, helpers, maxLength, required, numeric,
 } from '@vuelidate/validators';
 import { useVuelidate } from '@vuelidate/core';
 import { useToast } from 'vue-toastification';
@@ -218,34 +219,50 @@ const formState = reactive({
   clientStatus: '',
 });
 
-const rules = computed(() => ({
-  clientNie: {
-    required: helpers.withMessage('Número del documento es obligatorio', required),
-    maxLength: helpers.withMessage(`Máximo de caracteres es 20`, maxLength(20)),
-  },
-  clientName: {
-    required: helpers.withMessage('Nombre es obligatorio', required),
-    maxLength: helpers.withMessage(`Máximo de caracteres es 100`, maxLength(100)),
-  },
-  clientFatherLastName: {
-    required: helpers.withMessage('Apellido del padre es obligatorio', required),
-    maxLength: helpers.withMessage(`Máximo de caracteres es 100`, maxLength(100)),
-  },
-  clientMotherLastName: {
-    required: helpers.withMessage('Apellido de la madre es obligatorio', required),
-    maxLength: helpers.withMessage(`Máximo de caracteres es 100`, maxLength(100)),
-  },
-  clientCompanyName: {
-    required: helpers.withMessage('Nombre de la empresa es obligatorio', required),
-    maxLength: helpers.withMessage(`Máximo de caracteres es 100`, maxLength(100)),
-  },
-  clientEmail: {
-    email: helpers.withMessage('El correo no es correcto', email),
-  },
-  clientPhone: {
-    maxLength: helpers.withMessage(`Máximo de caracteres es 20`, maxLength(20)),
-  },
-}));
+const rules = computed(() => {
+  let docMaxLength = 8;
+  if (typeNie.value?.code === 'RUC') {
+    docMaxLength = 11;
+  } else if (typeNie.value?.code === 'CE') {
+    docMaxLength = 20;
+  }
+  const validation = {
+    clientNie: {
+      required: helpers.withMessage('Número del documento es obligatorio', required),
+      numeric: helpers.withMessage('Sólo se aceptan números', numeric),
+      maxLength: helpers.withMessage(`Máximo de caracteres es ${docMaxLength}`, maxLength(docMaxLength)),
+    },
+    clientName: {
+      required: helpers.withMessage('Nombre es obligatorio', required),
+      maxLength: helpers.withMessage(`Máximo de caracteres es 100`, maxLength(100)),
+    },
+    clientFatherLastName: {
+      required: helpers.withMessage('Apellido del padre es obligatorio', required),
+      maxLength: helpers.withMessage(`Máximo de caracteres es 100`, maxLength(100)),
+    },
+    clientMotherLastName: {
+      required: helpers.withMessage('Apellido de la madre es obligatorio', required),
+      maxLength: helpers.withMessage(`Máximo de caracteres es 100`, maxLength(100)),
+    },
+    clientCompanyName: {},
+    clientEmail: {
+      email: helpers.withMessage('El correo no es correcto', email),
+    },
+    clientPhone: {
+      numeric: helpers.withMessage('Sólo se aceptan números', numeric),
+      maxLength: helpers.withMessage(`Máximo de caracteres es 20`, maxLength(20)),
+    },
+  };
+
+  if (typeNie.value?.code === 'RUC') {
+    validation.clientCompanyName = {
+      required: helpers.withMessage('Nombre de la empresa es obligatorio', required),
+      maxLength: helpers.withMessage(`Máximo de caracteres es 100`, maxLength(100)),
+    };
+  }
+
+  return validation;
+});
 
 const v$ = useVuelidate(rules, formState, { $autoDirty: true });
 
