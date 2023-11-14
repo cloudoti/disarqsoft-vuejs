@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import Home from '@/views/Home.vue';
 import WorkTray from '@/views/workTray/WorkTray.vue';
-import WorkOrder from '@/views/workOrder/WorkOrder.vue';
+import Order from '@/views/order/Order.vue';
 import Product from '@/views/setting/product/Product.vue';
 import ProductList from '@/views/setting/product/ProductList.vue';
 import Setting from '@/layouts/backOffice/Setting.vue';
@@ -17,6 +17,7 @@ import VehicleList from '@/views/setting/vehicle/VehicleList.vue';
 import Vehicle from '@/views/setting/vehicle/Vehicle.vue';
 import Quotation from '@/views/quotation/Quotation.vue';
 import QuotationList from '@/views/quotation/QuotationList.vue';
+import OrderList from '@/views/order/OrderList.vue';
 
 const rolesUser = Storage.auth.roles === undefined ? [] : Storage.auth.roles;
 
@@ -166,12 +167,12 @@ const childHome = [
   {
     path: ERouteType.ORDER_PATH,
     name: ERouteType.ORDER_NAME,
-    component: WorkTray,
+    component: OrderList,
   },
   {
     path: ERouteType.NEW_ORDER_PATH,
     name: ERouteType.NEW_ORDER_NAME,
-    component: WorkOrder,
+    component: Order,
   },
   {
     path: ERouteType.QUOTATION_PATH,

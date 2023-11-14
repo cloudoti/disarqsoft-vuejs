@@ -1,20 +1,29 @@
 import User from '@/data/entity/User';
 import OrderDetail from '@/data/entity/OrderDetail';
+import Quotation from '@/data/entity/Quotation';
+import Vehicle from '@/data/entity/Vehicle';
+import Client from '@/data/entity/Client';
 
 export default class Order {
     id?: number;
 
-    code?: string;
-
     issueDate?: Date;
 
-    paymentMethod?: string;
+    warrantyDate?: Date;
 
-    totalDelivery?: number;
+    price?: number;
+
+    igv?: number;
 
     total?: number;
 
     user?: User;
+
+    vehicle?: Vehicle;
+
+    client?: Client;
+
+    quotation?: Quotation;
 
     detail?: OrderDetail[];
 }

@@ -1,10 +1,7 @@
-import Order from '@/data/entity/Order';
 import Product from '@/data/entity/Product';
 
 export default class OrderDetail {
     id?: number;
-
-    order?: Order;
 
     product?: Product;
 
@@ -13,4 +10,6 @@ export default class OrderDetail {
     price?: number;
 
     total?: number;
+
+    igv?: number;
 }

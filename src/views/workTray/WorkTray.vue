@@ -241,7 +241,7 @@ import Autocomplete from '@/ui/components/Autocomplete.vue';
 import Loading from '@/ui/components/Loading.vue';
 import EmptyResult from '@/ui/components/table/EmptyResult.vue';
 import WorkTrayParams from '@/data/entity/WorkTrayParams';
-import WorkOrdersAPI from '@/data/api/WorkOrdersAPI';
+import WorkOrdersAPI from '@/data/api/OrdersAPI';
 import WorkTrayOrderDetail from '@/data/entity/WorkTrayOrderDetail';
 import Button from '@/ui/components/Button.vue';
 import Input from '@/ui/components/Input.vue';

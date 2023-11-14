@@ -13,6 +13,10 @@ export default class ERouteType {
 
   static readonly EDIT_PRODUCT_NAME: string = 'Configuracion Editar Producto';
 
+  static readonly SUMMARY_ORDER_PATH: string = '/resumen';
+
+  static readonly SUMMARY_ORDER_NAME: string = 'Resumen';
+
   static readonly ORDER_PATH: string = '/ordenes';
 
   static readonly ORDER_NAME: string = 'Ordenes';
