@@ -232,13 +232,13 @@ const open = ref(false);
 const user = auth?.user;
 
 const appNavigation = ref([
-  {
+  /* {
     name: 'Bandeja',
     href: '/ordenes',
     icon: ClipboardListIcon,
     current: false,
     show: true,
-  },
+  }, */
   {
     name: 'Cotizaciones',
     href: '/cotizaciones',
@@ -247,8 +247,8 @@ const appNavigation = ref([
     show: true,
   },
   {
-    name: 'Registrar OP',
-    href: '/nueva-orden',
+    name: 'Ordenes',
+    href: '/ordenes',
     icon: DocumentAddIcon,
     current: false,
     show: true,

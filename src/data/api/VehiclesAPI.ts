@@ -27,6 +27,11 @@ class VehiclesAPI extends BaseApi {
       const response = await api.get<any>(`/${this.url}`);
       return (response && response.data) || null;
     };
+
+  ListByClient = async (id): Promise<any> => {
+    const response = await api.get<any>(`/${this.url}/client/${id}`);
+    return (response && response.data) || null;
+  };
 }
 
 export default new VehiclesAPI();

@@ -67,7 +67,7 @@
                   :options="vehicleList"
               >
                 <template #optionContent="item">
-                  {{ item.item.model }} {{ item.item.vehicleRegistration }}
+                  {{ item.item.brand?.name }} {{ item.item.model }} {{ item.item.vehicleRegistration }}
                 </template>
               </Select>
             </div>
@@ -331,6 +331,10 @@ const btnAcceptDisable = computed(() => v$.value.$invalid);
 const selectClient = (item) => {
   client.value = item;
   clientName.value = `${item.name} ${item.fatherLastName} ${item.motherLastName}`;
+
+  VehiclesAPI.ListByClient(item.id).then((data) => {
+    vehicleList.value = data;
+  });
 };
 
 const getClientList = () => {
@@ -445,15 +449,15 @@ const mounted = async () => {
   const promises: Promise<any>[] = [];
 
   promises.push(ClientsAPI.List());
-  promises.push(VehiclesAPI.List());
+  // promises.push(VehiclesAPI.List());
   promises.push(ProductsAPI.ListPatient());
 
   Promise.all(promises)
     .then((values) => {
-      const [clients, vehicles, products] = values;
+      const [clients/* , vehicles */, products] = values;
       // Se obtiene el resultado de la primera promesa
       clientList.value = clients;
-      vehicleList.value = vehicles;
+      // vehicleList.value = vehicles;
       productList.value = products;
     })
     .catch(() => {
