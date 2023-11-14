@@ -9,7 +9,7 @@
         size="10"/>
     <div class="px-5 sm:px-8 lg:px-10 py-5">
       <div class="grid grid-cols-3 gap-4">
-        <div>
+        <div class="col-span-2">
           <Autocomplete
               label="Cliente"
               placeholder="Cliente (nombre ó documento)"
@@ -28,6 +28,20 @@
           </Autocomplete>
         </div>
         <div>
+          <Switch
+              v-model="v$.vehicleStatus.$model"
+              :required="true"
+              label="Estado"
+              on-label=""
+              off-label=""
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="px-5 sm:px-8 lg:px-10 py-5">
+      <div class="grid grid-cols-3 gap-4">
+        <div>
           <Input
               label="Placa"
               name="vehicleRegistration"
@@ -39,28 +53,12 @@
           />
         </div>
         <div>
-          <Input
-              label="Año"
-              name="vehicleYear"
-              autocomplete="off"
-              v-model="v$.vehicleYear.$model"
-              placeholder="Ingrese el año."
-              :required="true"
-              :errors="v$.vehicleYear.$errors"
-          />
-        </div>
-      </div>
-    </div>
-
-    <div class="px-5 sm:px-8 lg:px-10 py-5">
-      <div class="grid grid-cols-3 gap-4">
-        <div>
           <Select
-              label="Tipo"
-              name="type"
-              v-model="type"
+              label="Marca"
+              name="brand"
+              v-model="brand"
               :required="true"
-              :options="typeList"
+              :options="brandList"
               :disabled="disableOfEdit"
           >
             <template #optionContent="item">
@@ -79,6 +77,36 @@
               :errors="v$.vehicleModel.$errors"
           />
         </div>
+      </div>
+    </div>
+
+    <div class="px-5 sm:px-8 lg:px-10 py-5">
+      <div class="grid grid-cols-3 gap-4">
+        <div>
+          <Input
+              label="Año"
+              name="vehicleYear"
+              autocomplete="off"
+              v-model="v$.vehicleYear.$model"
+              placeholder="Ingrese el año."
+              :required="true"
+              :errors="v$.vehicleYear.$errors"
+          />
+        </div>
+        <div>
+          <Select
+              label="Tipo"
+              name="type"
+              v-model="type"
+              :required="true"
+              :options="typeList"
+              :disabled="disableOfEdit"
+          >
+            <template #optionContent="item">
+              {{ item.item.name }}
+            </template>
+          </Select>
+        </div>
         <div>
           <Input
               label="Motor"
@@ -89,24 +117,6 @@
               :required="true"
               :errors="v$.vehicleMotor.$errors"
           />
-        </div>
-      </div>
-    </div>
-    <div class="px-5 sm:px-8 lg:px-10 pt-1 pb-5">
-      <div class="md:grid grid-cols-1 gap-4">
-        <div>
-          <Select
-              label="Estado"
-              name="statusSelect"
-              v-model="status"
-              :required="true"
-              :options="statusList"
-              :disabled="disableOfEdit"
-          >
-            <template #optionContent="item">
-              {{ item.item.name }}
-            </template>
-          </Select>
         </div>
       </div>
     </div>
@@ -143,6 +153,9 @@ import ClientsAPI from '@/data/api/ClientsAPI';
 import Vehicle from '@/data/entity/Vehicle';
 import Client from '@/data/entity/Client';
 import Autocomplete from '@/ui/components/Autocomplete.vue';
+import Switch from '@/ui/components/Switch.vue';
+import Catalog from '@/data/entity/Catalog';
+import BrandsAPI from '@/data/api/BrandsAPI';
 
 let user: Vehicle;
 const disableOfEdit = ref(false);
@@ -166,15 +179,8 @@ const typeList = ref<Status[]>([{
 }]);
 const type = ref<Status>();
 
-const statusList = ref<Status[]>([{
-  code: 'true',
-  name: 'Activo',
-},
-{
-  code: 'false',
-  name: 'Inactivo',
-}]);
-const status = ref<Status>();
+const brandList = ref<Catalog[]>([]);
+const brand = ref<Catalog>();
 
 const clientName = ref('');
 const client = ref<Client>();
@@ -207,6 +213,7 @@ const formState = reactive({
   vehicleModel: '',
   vehicleMotor: '',
   vehicleYear: '',
+  vehicleStatus: true,
 });
 
 const rules = computed(() => ({
@@ -226,6 +233,7 @@ const rules = computed(() => ({
     required: helpers.withMessage('Año es obligatorio', required),
     maxValue: helpers.withMessage(`Valor máximo 2024`, maxValue(2024)),
   },
+  vehicleStatus: {},
 }));
 
 const v$ = useVuelidate(rules, formState, { $autoDirty: true });
@@ -264,7 +272,10 @@ const handleSubmit = async () => {
       client: {
         id: client.value?.id,
       },
-      active: Boolean(status.value?.code),
+      brand: {
+        id: brand.value?.id,
+      },
+      active: formState.vehicleStatus,
     };
     if (+props.id > 0) {
       user.id = +props.id;
@@ -306,15 +317,17 @@ const mounted = async () => {
   const promises: Promise<any>[] = [];
 
   promises.push(ClientsAPI.List());
+  promises.push(BrandsAPI.List());
 
   if (+props.id > 0) {
     promises.push(VehiclesAPI.GetById(+props.id));
   }
   Promise.all(promises)
     .then((values) => {
-      const [clients, pat] = values;
+      const [clients, brands, pat] = values;
       // Se obtiene el resultado de la primera promesa
       clientList.value = clients;
+      brandList.value = brands;
 
       if (+props.id > 0) {
         user = pat;
@@ -323,12 +336,13 @@ const mounted = async () => {
           selectClient(user.client);
           type.value = typeList.value.find((s) => s.code === user.type);
           client.value = clientList.value?.find((s) => s.id === user.client?.id);
+          brand.value = brandList.value?.find((s) => s.id === user.brand?.id);
           formState.vehicleVehicleRegistration = user.vehicleRegistration!;
           formState.vehicleModel = user.model!;
           formState.vehicleMotor = user.motor!;
           formState.vehicleYear = user.year!;
 
-          status.value = statusList.value.find((s) => s.code === `${user.active}`);
+          formState.vehicleStatus = user.active!;
           btnName.value = 'Editar vehículo';
         }
       }

@@ -1,4 +1,5 @@
 import Client from '@/data/entity/Client';
+import Catalog from '@/data/entity/Catalog';
 
 export default class Vehicle {
     id?: number;
@@ -16,4 +17,6 @@ export default class Vehicle {
     active?: boolean;
 
     client?: Client;
+
+    brand?: Catalog;
 }
