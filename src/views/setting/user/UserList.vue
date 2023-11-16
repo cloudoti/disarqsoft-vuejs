@@ -9,7 +9,7 @@
     </router-link>
   </div>
 
-  <div class="relative mt-5">
+<!--  <div class="relative mt-5">
     <SearchIcon class="h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"/>
     <Input
       type="text"
@@ -22,7 +22,7 @@
         <SearchIcon class="h-5"/>
       </template>
     </Input>
-  </div>
+  </div>-->
 
   <div class="relative mt-5">
     <Loading

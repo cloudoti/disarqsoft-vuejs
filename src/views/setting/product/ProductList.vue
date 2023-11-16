@@ -10,7 +10,7 @@
     </router-link>
   </div>
 
-  <div class="mt-5">
+<!--  <div class="mt-5">
     <Input
       type="text"
       placeholder="Ingrese el nombre del producto ó su código."
@@ -23,7 +23,7 @@
         <SearchIcon class="h-5 w-5"/>
       </template>
     </Input>
-  </div>
+  </div>-->
 
   <div class="relative mt-5">
 

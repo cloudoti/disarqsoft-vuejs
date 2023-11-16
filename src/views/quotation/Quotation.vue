@@ -407,6 +407,12 @@ const handleSubmit = async () => {
   if (v$.value.$invalid) {
     loadingButton.value = false;
     toast.warning('Los datos ingresados no son correctos');
+  } else if (quotationDetail.value.some((d) => !d.quantity)) {
+    loadingButton.value = false;
+    alert.warning(['Debe ingresar una cantidad'], { title: 'Datos faltantes' });
+  } else if (!client.value.id || !vehicle.value.id || quotationDetail.value.length === 0) {
+    loadingButton.value = false;
+    alert.warning(['Debe ingresar un cliente, vehículo y un servicio'], { title: 'Datos faltantes' });
   } else {
     quotation = {
       vehicle: {

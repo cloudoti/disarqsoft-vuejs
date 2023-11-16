@@ -89,6 +89,7 @@
               label="Teléfono"
               name="phone"
               autocomplete="off"
+              :required="true"
               v-model="v$.clientPhone.$model"
               placeholder="Ingrese el número de teléfono."
               :errors="v$.clientPhone.$errors"
@@ -99,6 +100,7 @@
               label="Email"
               name="emial"
               autocomplete="off"
+              :required="true"
               v-model="v$.clientEmail.$model"
               placeholder="Ingrese el corrreo."
               :errors="v$.clientEmail.$errors"
@@ -139,7 +141,7 @@ import {
   computed, defineProps, reactive, ref,
 } from 'vue';
 import {
-  email, helpers, maxLength, required, numeric,
+  email, helpers, maxLength, required, numeric, minLength,
 } from '@vuelidate/validators';
 import { useVuelidate } from '@vuelidate/core';
 import { useToast } from 'vue-toastification';
@@ -219,6 +221,8 @@ const formState = reactive({
   clientStatus: '',
 });
 
+const alphaNumeric = helpers.regex(/^[a-zA-Z0-9\s]*$/);
+
 const rules = computed(() => {
   let docMaxLength = 8;
   if (typeNie.value?.code === 'RUC') {
@@ -235,29 +239,39 @@ const rules = computed(() => {
     clientName: {
       required: helpers.withMessage('Nombre es obligatorio', required),
       maxLength: helpers.withMessage(`Máximo de caracteres es 100`, maxLength(100)),
+      minLength: helpers.withMessage(`Mínimo de caracteres es 2`, minLength(2)),
+      regex: helpers.withMessage('Sólo se permiten números y letras', alphaNumeric),
     },
     clientFatherLastName: {
       required: helpers.withMessage('Apellido del padre es obligatorio', required),
       maxLength: helpers.withMessage(`Máximo de caracteres es 100`, maxLength(100)),
+      minLength: helpers.withMessage(`Mínimo de caracteres es 2`, minLength(2)),
+      regex: helpers.withMessage('Sólo se permiten números y letras', alphaNumeric),
     },
     clientMotherLastName: {
       required: helpers.withMessage('Apellido de la madre es obligatorio', required),
       maxLength: helpers.withMessage(`Máximo de caracteres es 100`, maxLength(100)),
+      minLength: helpers.withMessage(`Mínimo de caracteres es 2`, minLength(2)),
+      regex: helpers.withMessage('Sólo se permiten números y letras', alphaNumeric),
     },
     clientCompanyName: {},
     clientEmail: {
+      required: helpers.withMessage('El correo es obligatorio', required),
       email: helpers.withMessage('El correo no es correcto', email),
     },
     clientPhone: {
+      required: helpers.withMessage('Apellido de la madre es obligatorio', required),
       numeric: helpers.withMessage('Sólo se aceptan números', numeric),
-      maxLength: helpers.withMessage(`Máximo de caracteres es 20`, maxLength(20)),
+      maxLength: helpers.withMessage(`Máximo de caracteres es 9`, maxLength(9)),
     },
   };
 
   if (typeNie.value?.code === 'RUC') {
     validation.clientCompanyName = {
       required: helpers.withMessage('Nombre de la empresa es obligatorio', required),
+      minLength: helpers.withMessage(`Mínimo de caracteres es 2`, minLength(2)),
       maxLength: helpers.withMessage(`Máximo de caracteres es 100`, maxLength(100)),
+      // regex: helpers.withMessage('Valor no soportado', alphaNumeric),
     };
   }
 

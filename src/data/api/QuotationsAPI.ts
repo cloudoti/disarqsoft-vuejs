@@ -23,8 +23,12 @@ class QuotationsAPI extends BaseApi {
       return (response && response.data) || null;
     };
 
-    List = async (): Promise<any> => {
-      const response = await api.get<any>(`/${this.url}`);
+    List = async (filter?: string): Promise<any> => {
+      let filterQuery = '';
+      if (filter) {
+        filterQuery = `?filter=${filter}`;
+      }
+      const response = await api.get<any>(`/${this.url}${filterQuery}`);
       return (response && response.data) || null;
     };
 }

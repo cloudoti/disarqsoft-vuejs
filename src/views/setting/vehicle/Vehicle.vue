@@ -216,22 +216,28 @@ const formState = reactive({
   vehicleStatus: true,
 });
 
+const alphaNumeric = helpers.regex(/^[a-zA-Z0-9\s]*$/);
+const vehicleRegistration = helpers.regex(/^[a-zA-Z0-9\\-]*$/);
+
 const rules = computed(() => ({
   vehicleVehicleRegistration: {
     required: helpers.withMessage('Número de placa es obligatorio', required),
-    maxLength: helpers.withMessage(`Máximo de caracteres es 10`, maxLength(10)),
+    maxLength: helpers.withMessage(`Máximo de caracteres es 7`, maxLength(7)),
+    regex: helpers.withMessage('Sólo se permiten números y letras', vehicleRegistration),
   },
   vehicleModel: {
     required: helpers.withMessage('Modelo es obligatorio', required),
-    maxLength: helpers.withMessage(`Máximo de caracteres es 100`, maxLength(100)),
+    maxLength: helpers.withMessage(`Máximo de caracteres es 20`, maxLength(20)),
+    regex: helpers.withMessage('Sólo se permiten números y letras', alphaNumeric),
   },
   vehicleMotor: {
     required: helpers.withMessage('Motor es obligatorio', required),
-    maxLength: helpers.withMessage(`Máximo de caracteres es 100`, maxLength(100)),
+    maxLength: helpers.withMessage(`Máximo de caracteres es 30`, maxLength(30)),
+    regex: helpers.withMessage('Sólo se permiten números y letras', alphaNumeric),
   },
   vehicleYear: {
     required: helpers.withMessage('Año es obligatorio', required),
-    maxValue: helpers.withMessage(`Valor máximo 2024`, maxValue(2024)),
+    maxValue: helpers.withMessage(`Valor máximo 2025`, maxValue(2025)),
   },
   vehicleStatus: {},
 }));
