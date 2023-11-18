@@ -8,7 +8,7 @@
         :show="loadingProduct"
         size="10"/>
     <div class="px-5 sm:px-8 lg:px-10 py-5">
-      <div class="grid grid-cols-2 gap-4">
+      <div class="grid grid-cols-3 gap-4">
         <div>
           <Select
               label="Tipo de documento"
@@ -34,6 +34,15 @@
               :errors="v$.clientNie.$errors"
           />
         </div>
+        <div>
+          <Switch
+              v-model="v$.clientStatus.$model"
+              :required="true"
+              label="Estado"
+              on-label=""
+              off-label=""
+          />
+        </div>
       </div>
     </div>
     <div class="px-5 sm:px-8 lg:px-10 pt-1 pb-5">
@@ -44,7 +53,7 @@
             autocomplete="off"
             v-model="v$.clientName.$model"
             placeholder="Ingrese nombre."
-            :required="true"
+            :required="typeNie?.code !== 'RUC'"
             :errors="v$.clientName.$errors"
         />
         <div>
@@ -54,7 +63,7 @@
               autocomplete="off"
               v-model="v$.clientFatherLastName.$model"
               placeholder="Ingrese apellido del padre."
-              :required="true"
+              :required="typeNie?.code !== 'RUC'"
               :errors="v$.clientFatherLastName.$errors"
           />
         </div>
@@ -65,7 +74,7 @@
               autocomplete="off"
               v-model="v$.clientMotherLastName.$model"
               placeholder="Ingrese apellido de la madre."
-              :required="true"
+              :required="typeNie?.code !== 'RUC'"
               :errors="v$.clientMotherLastName.$errors"
           />
         </div>
@@ -79,6 +88,7 @@
               name="companyName"
               autocomplete="off"
               v-model="v$.clientCompanyName.$model"
+              :disabled="typeNie?.code !== 'RUC'"
               :required="typeNie?.code === 'RUC'"
               placeholder="Ingrese el nombre de la empresa."
               :errors="v$.clientCompanyName.$errors"
@@ -107,24 +117,7 @@
           />
         </div>
       </div>
-    </div>
-    <div class="px-5 sm:px-8 lg:px-10 pt-1 pb-5">
-      <div class="md:grid grid-cols-1 gap-4">
-        <div>
-          <Select
-              label="Estado"
-              name="statusSelect"
-              v-model="status"
-              :required="true"
-              :options="statusList"
-              :disabled="disableOfEdit"
-          >
-            <template #optionContent="item">
-              {{ item.item.name }}
-            </template>
-          </Select>
-        </div>
-      </div>
+      <div class="mt-3">(*) Campos obligatorios</div>
     </div>
   </form>
   <div class="px-5 sm:px-8 lg:px-10 py-5 text-right">
@@ -156,6 +149,7 @@ import Select from '@/ui/components/Select.vue';
 import Status from '@/data/entity/Status';
 import ClientsAPI from '@/data/api/ClientsAPI';
 import Client from '@/data/entity/Client';
+import Switch from '@/ui/components/Switch.vue';
 
 let user: Client;
 const disableOfEdit = ref(false);
@@ -178,16 +172,6 @@ const typeNieList = ref<Status[]>([{
   name: 'Carnet de extranjería',
 }]);
 const typeNie = ref<Status>();
-
-const statusList = ref<Status[]>([{
-  code: 'true',
-  name: 'Activo',
-},
-{
-  code: 'false',
-  name: 'Inactivo',
-}]);
-const status = ref<Status>();
 
 const btnName = ref('Agregar usuario');
 const props = defineProps({
@@ -218,38 +202,54 @@ const formState = reactive({
   clientCompanyName: '',
   clientPhone: '',
   clientEmail: '',
-  clientStatus: '',
+  clientStatus: true,
 });
 
 const alphaNumeric = helpers.regex(/^[a-zA-Z0-9\s]*$/);
 
 const rules = computed(() => {
+  let docMinLength = 8;
   let docMaxLength = 8;
   if (typeNie.value?.code === 'RUC') {
+    docMinLength = 11;
     docMaxLength = 11;
   } else if (typeNie.value?.code === 'CE') {
-    docMaxLength = 20;
+    docMinLength = 12;
+    docMaxLength = 12;
   }
   const validation = {
     clientNie: {
       required: helpers.withMessage('Número del documento es obligatorio', required),
       numeric: helpers.withMessage('Sólo se aceptan números', numeric),
+      minLength: helpers.withMessage(`Mínimo de caracteres es ${docMinLength}`, minLength(docMinLength)),
       maxLength: helpers.withMessage(`Máximo de caracteres es ${docMaxLength}`, maxLength(docMaxLength)),
     },
-    clientName: {
+    clientName: typeNie.value?.code !== 'RUC' ? {
       required: helpers.withMessage('Nombre es obligatorio', required),
       maxLength: helpers.withMessage(`Máximo de caracteres es 100`, maxLength(100)),
       minLength: helpers.withMessage(`Mínimo de caracteres es 2`, minLength(2)),
       regex: helpers.withMessage('Sólo se permiten números y letras', alphaNumeric),
-    },
-    clientFatherLastName: {
-      required: helpers.withMessage('Apellido del padre es obligatorio', required),
+    } : {
       maxLength: helpers.withMessage(`Máximo de caracteres es 100`, maxLength(100)),
       minLength: helpers.withMessage(`Mínimo de caracteres es 2`, minLength(2)),
       regex: helpers.withMessage('Sólo se permiten números y letras', alphaNumeric),
     },
-    clientMotherLastName: {
+    clientFatherLastName: typeNie.value?.code !== 'RUC' ? {
+      required: helpers.withMessage('Apellido del padre es obligatorio', required),
+      maxLength: helpers.withMessage(`Máximo de caracteres es 100`, maxLength(100)),
+      minLength: helpers.withMessage(`Mínimo de caracteres es 2`, minLength(2)),
+      regex: helpers.withMessage('Sólo se permiten números y letras', alphaNumeric),
+    } : {
+      maxLength: helpers.withMessage(`Máximo de caracteres es 100`, maxLength(100)),
+      minLength: helpers.withMessage(`Mínimo de caracteres es 2`, minLength(2)),
+      regex: helpers.withMessage('Sólo se permiten números y letras', alphaNumeric),
+    },
+    clientMotherLastName: typeNie.value?.code !== 'RUC' ? {
       required: helpers.withMessage('Apellido de la madre es obligatorio', required),
+      maxLength: helpers.withMessage(`Máximo de caracteres es 100`, maxLength(100)),
+      minLength: helpers.withMessage(`Mínimo de caracteres es 2`, minLength(2)),
+      regex: helpers.withMessage('Sólo se permiten números y letras', alphaNumeric),
+    } : {
       maxLength: helpers.withMessage(`Máximo de caracteres es 100`, maxLength(100)),
       minLength: helpers.withMessage(`Mínimo de caracteres es 2`, minLength(2)),
       regex: helpers.withMessage('Sólo se permiten números y letras', alphaNumeric),
@@ -260,10 +260,12 @@ const rules = computed(() => {
       email: helpers.withMessage('El correo no es correcto', email),
     },
     clientPhone: {
-      required: helpers.withMessage('Apellido de la madre es obligatorio', required),
+      required: helpers.withMessage('El teléfono es obligatorio', required),
       numeric: helpers.withMessage('Sólo se aceptan números', numeric),
       maxLength: helpers.withMessage(`Máximo de caracteres es 9`, maxLength(9)),
+      minLength: helpers.withMessage(`Mínimo de caracteres es 9`, minLength(9)),
     },
+    clientStatus: {},
   };
 
   if (typeNie.value?.code === 'RUC') {
@@ -300,7 +302,7 @@ const handleSubmit = async () => {
       companyName: formState.clientCompanyName,
       email: formState.clientEmail,
       phone: formState.clientPhone,
-      active: Boolean(status.value?.code),
+      active: formState.clientStatus,
     };
     if (+props.id > 0) {
       user.id = +props.id;
@@ -360,7 +362,7 @@ const mounted = async () => {
           formState.clientCompanyName = user.companyName!;
           formState.clientEmail = user.email!;
           formState.clientPhone = user.phone!;
-          status.value = statusList.value.find((s) => s.code === `${user.active}`);
+          formState.clientStatus = user.active!;
           btnName.value = 'Editar cliente';
         }
       }
