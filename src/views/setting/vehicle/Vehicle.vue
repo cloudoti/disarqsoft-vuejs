@@ -23,7 +23,10 @@
               :debounce="500"
           >
             <template #messageResult="item">
-              {{ item.item.name }}
+              <div class="flex-row">
+                <div class="mt-1">{{ `${item.item.typeNie}: ${item.item.nie}` }}</div>
+                {{ `NOMBRE: ${item.item.name} ${item.item.fatherLastName} ${item.item.motherLastName}`}}
+              </div>
             </template>
           </Autocomplete>
         </div>
@@ -60,6 +63,7 @@
               :required="true"
               :options="brandList"
               :disabled="disableOfEdit"
+              :errors="brand ? [] : ['Marca es obligatorio']"
           >
             <template #optionContent="item">
               {{ item.item.name }}
@@ -101,6 +105,7 @@
               :required="true"
               :options="typeList"
               :disabled="disableOfEdit"
+              :errors="type ? [] : ['Tipo es obligatorio']"
           >
             <template #optionContent="item">
               {{ item.item.name }}
@@ -119,6 +124,7 @@
           />
         </div>
       </div>
+      <div class="mt-3">(*) Campos obligatorios</div>
     </div>
   </form>
   <div class="px-5 sm:px-8 lg:px-10 py-5 text-right">
@@ -135,7 +141,7 @@ import {
   computed, defineProps, reactive, ref,
 } from 'vue';
 import {
-  email, helpers, maxLength, maxValue, required,
+  helpers, maxLength, minLength, maxValue, minValue, required,
 } from '@vuelidate/validators';
 import { useVuelidate } from '@vuelidate/core';
 import { useToast } from 'vue-toastification';
@@ -223,28 +229,32 @@ const rules = computed(() => ({
   vehicleVehicleRegistration: {
     required: helpers.withMessage('Número de placa es obligatorio', required),
     maxLength: helpers.withMessage(`Máximo de caracteres es 7`, maxLength(7)),
+    minLength: helpers.withMessage(`Mínimo de caracteres es 7`, minLength(7)),
     regex: helpers.withMessage('Sólo se permiten números y letras', vehicleRegistration),
   },
   vehicleModel: {
     required: helpers.withMessage('Modelo es obligatorio', required),
+    minLength: helpers.withMessage(`Mínimo de caracteres es 2`, minLength(2)),
     maxLength: helpers.withMessage(`Máximo de caracteres es 20`, maxLength(20)),
     regex: helpers.withMessage('Sólo se permiten números y letras', alphaNumeric),
   },
   vehicleMotor: {
     required: helpers.withMessage('Motor es obligatorio', required),
-    maxLength: helpers.withMessage(`Máximo de caracteres es 30`, maxLength(30)),
+    maxLength: helpers.withMessage(`Máximo de caracteres es 5`, maxLength(5)),
+    minValue: helpers.withMessage(`Valor máximo 1000`, minValue(1000)),
     regex: helpers.withMessage('Sólo se permiten números y letras', alphaNumeric),
   },
   vehicleYear: {
     required: helpers.withMessage('Año es obligatorio', required),
     maxValue: helpers.withMessage(`Valor máximo 2025`, maxValue(2025)),
+    minValue: helpers.withMessage(`Valor mínimo 1900`, minValue(1900)),
   },
   vehicleStatus: {},
 }));
 
 const v$ = useVuelidate(rules, formState, { $autoDirty: true });
 
-const btnAcceptDisable = computed(() => v$.value.$invalid);
+const btnAcceptDisable = computed(() => v$.value.$invalid || !brand.value || !type.value);
 
 const selectClient = (item) => {
   client.value = item;

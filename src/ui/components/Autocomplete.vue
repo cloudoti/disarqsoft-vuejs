@@ -7,43 +7,45 @@
       v-bind="$attrs"
       @input="selected = false"
     />
-    <ul
-      v-if="showEmptyResult && !searchItems.length && model.toString().trim() !== ''"
-    >
-      <li
-        @click="selectedEmptyLocal"
-        class="cursor-pointer hover:bg-gray-100 px-2 py-2 border-gray-200"
+    <div>
+      <ul
+          v-if="showEmptyResult && !searchItems.length && model.toString().trim() !== ''"
       >
-        <div v-if="$slots.messageEmptyResult">
-          <slot name="messageEmptyResult"/>
-        </div>
-        <div
-          class="ml-3 mt-2 text-sm text-red-600"
-          v-else>
-          No se encontraron resultados
-        </div>
-      </li>
-    </ul>
-    <ul
-      v-if="!selected && searchItems.length"
-      class="rounded bg-white border border-gray-300 space-y-1 content-input-auto custom-scroll"
-    >
-      <li
-        v-for="(searchItem, index) in searchItems"
-        :key="index + '-' + searchItem.toString()"
-        @click="selectedItemLocal(searchItem, index)"
-        class="cursor-pointer hover:bg-gray-100 px-2 py-1"
+        <li
+            @click="selectedEmptyLocal"
+            class="cursor-pointer hover:bg-gray-100 px-2 py-2 border-gray-200"
+        >
+          <div v-if="$slots.messageEmptyResult">
+            <slot name="messageEmptyResult"/>
+          </div>
+          <div
+              class="ml-3 mt-2 text-sm text-red-600"
+              v-else>
+            No se encontraron resultados
+          </div>
+        </li>
+      </ul>
+      <ul
+          v-if="!selected && searchItems.length"
+          class="rounded bg-white border border-gray-300 space-y-1 content-input-auto custom-scroll"
       >
-        <div v-if="$slots.messageResult">
-          <slot
-            name="messageResult"
-            :item="searchItem"></slot>
-        </div>
-        <div v-else>
-          {{ searchItem.toString() }}
-        </div>
-      </li>
-    </ul>
+        <li
+            v-for="(searchItem, index) in searchItems"
+            :key="index + '-' + searchItem.toString()"
+            @click="selectedItemLocal(searchItem, index)"
+            class="cursor-pointer hover:bg-gray-100 px-2 py-1"
+        >
+          <div v-if="$slots.messageResult">
+            <slot
+                name="messageResult"
+                :item="searchItem"></slot>
+          </div>
+          <div v-else>
+            {{ searchItem.toString() }}
+          </div>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
