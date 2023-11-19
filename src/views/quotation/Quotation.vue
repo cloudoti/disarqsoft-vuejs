@@ -237,6 +237,7 @@
               </tfoot>
             </table>
           </div>
+          <div class="mt-3">(*) Campos obligatorios</div>
         </div>
       </form>
       <div class="px-5 sm:px-8 lg:px-10 py-5 text-right">
@@ -255,8 +256,6 @@ import {
   computed, defineProps, reactive, ref,
 } from 'vue';
 import { useToast } from 'vue-toastification';
-import { helpers, maxLength, required } from '@vuelidate/validators';
-import { useVuelidate } from '@vuelidate/core';
 import Decimal from 'decimal.js';
 import { createAlert } from '@/ui/plugins/alert';
 // eslint-disable-next-line import/no-cycle
@@ -358,6 +357,11 @@ const getClientList = () => {
 };
 
 const selectProduct = (item) => {
+  if (quotationDetail.value.some((d) => d.product?.id === item.id)) {
+    toast.warning('El servicio ya fue agregado');
+    return;
+  }
+
   const detail = new QuotationDetail();
   detail.product = item;
 
