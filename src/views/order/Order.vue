@@ -24,7 +24,7 @@
                   :debounce="500"
               >
                 <template #messageResult="item">
-                  {{ `ORD-${item.item.id} -> ${item.item.client?.name} ${item.item.client?.fatherLastName} ${item.item.client?.motherLastName}` }}
+                  {{ `COT-${item.item.id} -> ${item.item.client?.name} ${item.item.client?.fatherLastName} ${item.item.client?.motherLastName}` }}
                 </template>
               </Autocomplete>
             </div>
