@@ -241,7 +241,7 @@ const rules = computed(() => ({
   vehicleMotor: {
     required: helpers.withMessage('Motor es obligatorio', required),
     maxLength: helpers.withMessage(`Máximo de caracteres es 5`, maxLength(5)),
-    minValue: helpers.withMessage(`Valor máximo 1000`, minValue(1000)),
+    minValue: helpers.withMessage(`Valor mínimo 1000`, minValue(1000)),
     regex: helpers.withMessage('Sólo se permiten números y letras', alphaNumeric),
   },
   vehicleYear: {

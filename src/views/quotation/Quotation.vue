@@ -24,7 +24,10 @@
                   :debounce="500"
               >
                 <template #messageResult="item">
-                  {{ item.item.name }}
+                  <div class="flex-row">
+                    <div class="mt-1">{{ `${item.item.typeNie}: ${item.item.nie}` }}</div>
+                    {{ `NOMBRE: ${item.item.name} ${item.item.fatherLastName} ${item.item.motherLastName}` }}
+                  </div>
                 </template>
               </Autocomplete>
             </div>
@@ -167,6 +170,7 @@
                         v-model="row.quantity"
                         :required="false"
                         :hide-optional="true"
+                        :errors="errors[i]"
                         v-on:change="() => calculateProduct()"
                         :debounce="250"
                     /></div>
@@ -190,7 +194,8 @@
                 <th
                     scope="row"
                     colspan="3"
-                    class="hidden pl-4 pr-3 pt-4 text-right text-sm font-normal text-gray-500 sm:table-cell sm:pl-0">Sub total
+                    class="hidden pl-4 pr-3 pt-4 text-right text-sm font-normal text-gray-500 sm:table-cell sm:pl-0">Sub
+                  total
                 </th>
                 <th
                     scope="row"
@@ -297,6 +302,8 @@ const filterProductList = ref<Product[]>();
 let quotation: Quotation;
 const quotationDetail = ref<QuotationDetail[]>([]);
 
+const errors = ref<any[]>([]);
+
 const subtotal = ref(0);
 const total = ref(0);
 const igv = ref(0);
@@ -320,13 +327,17 @@ const props = defineProps({
   },
 });
 
-const formState = reactive({});
+const checkIsNumber = (value) => {
+  const numericRegex = /^[0-9]*$/;
 
-const rules = computed(() => ({}));
+  const isNumber = value && numericRegex.test(`${value}`);
 
-const v$ = useVuelidate(rules, formState, { $autoDirty: true });
+  return isNumber && +value > 0;
+};
 
-const btnAcceptDisable = computed(() => v$.value.$invalid);
+const btnAcceptDisable = computed(() => !client.value.id || !vehicle.value.id
+    || !quotationDetail.value || quotationDetail.value.length === 0
+    || quotationDetail.value.some((v) => !checkIsNumber(v.quantity ?? '0')) || errors.value.some((v) => (v?.length ?? 0) > 0));
 
 const selectClient = (item) => {
   client.value = item;
@@ -352,6 +363,8 @@ const selectProduct = (item) => {
 
   quotationDetail.value.push(detail);
   productName.value = '';
+
+  errors.value.push(null);
 };
 
 const getProductList = () => {
@@ -368,8 +381,11 @@ const calculateTotal = () => {
   let t = 0;
   let i = 0;
 
-  (quotationDetail.value ?? []).forEach((o) => {
-    if (o.quantity) {
+  (quotationDetail.value ?? []).forEach((o, index) => {
+    const isNumber = checkIsNumber(o.quantity);
+    errors.value[index] = !isNumber ? [{ $message: 'Cantidad incorrecta' }] : [];
+
+    if (isNumber) {
       // eslint-disable-next-line no-unused-expressions,no-param-reassign
       o.total = +new Decimal(o.product!.price!).mul(new Decimal(o.quantity!)).toFixed(2);
       // eslint-disable-next-line no-unused-expressions,no-param-reassign
@@ -402,12 +418,7 @@ const calculateProduct = () => {
 const handleSubmit = async () => {
   loadingButton.value = true;
 
-  await v$.value.$validate();
-
-  if (v$.value.$invalid) {
-    loadingButton.value = false;
-    toast.warning('Los datos ingresados no son correctos');
-  } else if (quotationDetail.value.some((d) => !d.quantity)) {
+  if (quotationDetail.value.some((d) => !d.quantity || d.quantity <= 0)) {
     loadingButton.value = false;
     alert.warning(['Debe ingresar una cantidad'], { title: 'Datos faltantes' });
   } else if (!client.value.id || !vehicle.value.id || quotationDetail.value.length === 0) {
