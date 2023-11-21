@@ -8,6 +8,19 @@
         :show="loadingProduct"
         size="10"/>
     <div class="px-5 sm:px-8 lg:px-10 py-5">
+      <div class="flex justify-end">
+        <div>
+          <Switch
+              v-model="v$.userStatus.$model"
+              :required="true"
+              label="Estado"
+              on-label=""
+              off-label=""
+          />
+        </div>
+      </div>
+    </div>
+    <div class="px-5 sm:px-8 lg:px-10 py-5">
       <div class="grid grid-cols-3 gap-4">
         <Input
             label="Nombre"
@@ -49,18 +62,21 @@
               label="Usuario"
               name="username"
               autocomplete="off"
+              :required="true"
               v-model="v$.userUsername.$model"
-              placeholder="Ingrese el precio."
+              placeholder="Ingrese el usuario."
               :errors="v$.userUsername.$errors"
           />
         </div>
         <div>
           <Input
               label="Pasword"
+              type="password"
               name="password"
               autocomplete="off"
+              :required="true"
               v-model="v$.userPassword.$model"
-              placeholder="Ingrese el precio."
+              placeholder="Ingrese el password."
               :errors="v$.userPassword.$errors"
           />
         </div>
@@ -72,20 +88,7 @@
               :required="true"
               :options="roles"
               :disabled="disableOfEdit"
-          >
-            <template #optionContent="item">
-              {{ item.item.name }}
-            </template>
-          </Select>
-        </div>
-        <div>
-          <Select
-              label="Estado"
-              name="statusSelect"
-              v-model="status"
-              :required="true"
-              :options="statusList"
-              :disabled="disableOfEdit"
+              :errors="role ? [] : ['Rol es obligatorio']"
           >
             <template #optionContent="item">
               {{ item.item.name }}
@@ -93,9 +96,11 @@
           </Select>
         </div>
       </div>
+      <div class="mt-3">(*) Campos obligatorios</div>
     </div>
   </form>
   <div class="px-5 sm:px-8 lg:px-10 py-5 text-right">
+
     <Button
         :label="btnName"
         :callback="handleSubmit"
@@ -108,7 +113,9 @@
 import {
   computed, defineProps, reactive, ref,
 } from 'vue';
-import { helpers, maxLength, required } from '@vuelidate/validators';
+import {
+  helpers, maxLength, minLength, required,
+} from '@vuelidate/validators';
 import { useVuelidate } from '@vuelidate/core';
 import { useToast } from 'vue-toastification';
 import { createAlert } from '@/ui/plugins/alert';
@@ -120,9 +127,9 @@ import Loading from '@/ui/components/Loading.vue';
 import Input from '@/ui/components/Input.vue';
 import Select from '@/ui/components/Select.vue';
 import Role from '@/data/entity/Role';
-import Status from '@/data/entity/Status';
 import UsersAPI from '@/data/api/UsersAPI';
 import User from '@/data/entity/User';
+import Switch from '@/ui/components/Switch.vue';
 
 let user: User;
 const disableOfEdit = ref(false);
@@ -134,15 +141,6 @@ const loadingProduct = ref(false);
 const loadingButton = ref(false);
 const roles = ref<Role[]>([]);
 const role = ref<Role>();
-const statusList = ref<Status[]>([{
-  code: 'true',
-  name: 'Activo',
-},
-{
-  code: 'false',
-  name: 'Inactivo',
-}]);
-const status = ref<Status>();
 
 const btnName = ref('Agregar usuario');
 const props = defineProps({
@@ -171,35 +169,41 @@ const formState = reactive({
   userUsername: '',
   userPassword: '',
   userRole: '',
-  userStatus: '',
+  userStatus: false,
 });
 
 const rules = computed(() => ({
   userName: {
     required: helpers.withMessage('Nombre del empleado es obligatorio', required),
+    minLength: helpers.withMessage(`Mínimo de caracteres es 2`, minLength(2)),
     maxLength: helpers.withMessage(`Máximo de caracteres es 100`, maxLength(100)),
   },
   userFatherLastName: {
     required: helpers.withMessage('Apellido del padre es obligatorio', required),
+    minLength: helpers.withMessage(`Mínimo de caracteres es 2`, minLength(2)),
     maxLength: helpers.withMessage(`Máximo de caracteres es 100`, maxLength(100)),
   },
   userMotherLastName: {
     required: helpers.withMessage('Apellido de la madre es obligatorio', required),
+    minLength: helpers.withMessage(`Mínimo de caracteres es 2`, minLength(2)),
     maxLength: helpers.withMessage(`Máximo de caracteres es 100`, maxLength(100)),
   },
   userUsername: {
     required: helpers.withMessage('Nombre del usuario es obligatorio', required),
+    minLength: helpers.withMessage(`Mínimo de caracteres es 5`, minLength(5)),
     maxLength: helpers.withMessage(`Máximo de caracteres es 100`, maxLength(25)),
   },
   userPassword: {
     required: helpers.withMessage('El password es obligatorio', required),
+    minLength: helpers.withMessage(`Mínimo de caracteres es 6`, minLength(6)),
     maxLength: helpers.withMessage(`Máximo de caracteres es 100`, maxLength(50)),
   },
+  userStatus: {},
 }));
 
 const v$ = useVuelidate(rules, formState, { $autoDirty: true });
 
-const btnAcceptDisable = computed(() => v$.value.$invalid);
+const btnAcceptDisable = computed(() => v$.value.$invalid || (role.value?.id ?? 0) <= 0);
 
 const handleSubmit = async () => {
   loadingButton.value = true;
@@ -219,7 +223,7 @@ const handleSubmit = async () => {
       role: {
         id: role.value?.id,
       },
-      active: Boolean(status.value?.code),
+      active: formState.userStatus,
     };
     if (+props.id > 0) {
       user.id = +props.id;
@@ -279,7 +283,7 @@ const mounted = async () => {
           formState.userUsername = user.username!;
           formState.userPassword = user.password!;
           role.value = user.role;
-          status.value = statusList.value.find((s) => s.code === `${user.active}`);
+          formState.userStatus = user.active!;
           btnName.value = 'Editar usuario';
         }
       }
