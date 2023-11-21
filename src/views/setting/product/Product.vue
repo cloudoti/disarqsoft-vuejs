@@ -1,6 +1,6 @@
 <template>
   <BreadCrumb :show-back="showBreadCrumb">Configuración / Producto /
-    {{ +props.id > 0 ? 'Editar product' : 'Agregar product' }}
+    {{ +props.id > 0 ? 'Editar product' : 'Agregar producto' }}
   </BreadCrumb>
   <form class="relative">
     <Loading
@@ -8,18 +8,27 @@
         :show="loadingProduct"
         size="10"/>
     <div class="px-5 sm:px-8 lg:px-10 py-5">
-      <Input
-          label="Nombre"
-          name="name"
-          autocomplete="off"
-          v-model="v$.productName.$model"
-          placeholder="Ingrese el nombres."
-          :required="true"
-          :errors="v$.productName.$errors"
-      />
+      <div class="md:grid grid-cols-2 gap-4">
+        <Input
+            label="Nombre"
+            name="name"
+            autocomplete="off"
+            v-model="v$.productName.$model"
+            placeholder="Ingrese el nombres."
+            :required="true"
+            :errors="v$.productName.$errors"
+        />
+        <Switch
+            v-model="v$.productStatus.$model"
+            :required="true"
+            label="Estado"
+            on-label=""
+            off-label=""
+        />
+      </div>
     </div>
     <div class="px-5 sm:px-8 lg:px-10 pt-1 pb-5">
-      <div class="md:grid grid-cols-3 gap-4">
+      <div class="md:grid grid-cols-2 gap-4">
         <div>
           <Input
               label="Precio"
@@ -38,20 +47,7 @@
               :required="true"
               :options="typeServiceList"
               :disabled="disableOfEdit"
-          >
-            <template #optionContent="item">
-              {{ item.item.name }}
-            </template>
-          </Select>
-        </div>
-        <div>
-          <Select
-              label="Estado"
-              name="statusSelect"
-              v-model="status"
-              :required="true"
-              :options="statusList"
-              :disabled="disableOfEdit"
+              :errors="typeService ? [] : ['Tipo de servicio es obligatorio']"
           >
             <template #optionContent="item">
               {{ item.item.name }}
@@ -59,6 +55,7 @@
           </Select>
         </div>
       </div>
+      <div class="mt-3">(*) Campos obligatorios</div>
     </div>
   </form>
   <div class="px-5 sm:px-8 lg:px-10 py-5 text-right">
@@ -75,7 +72,7 @@ import {
   computed, defineProps, reactive, ref,
 } from 'vue';
 import {
-  helpers, maxLength, minValue, required,
+  helpers, maxLength, minLength, minValue, required,
 } from '@vuelidate/validators';
 import { useVuelidate } from '@vuelidate/core';
 import { useToast } from 'vue-toastification';
@@ -90,8 +87,8 @@ import Input from '@/ui/components/Input.vue';
 import Select from '@/ui/components/Select.vue';
 import Product from '@/data/entity/Product';
 import Catalog from '@/data/entity/Catalog';
-import Status from '@/data/entity/Status';
 import TypeServicesAPI from '@/data/api/TypeServicesAPI';
+import Switch from '@/ui/components/Switch.vue';
 
 let product: Product;
 const disableOfEdit = ref(false);
@@ -103,15 +100,6 @@ const loadingProduct = ref(false);
 const loadingButton = ref(false);
 const typeServiceList = ref<Catalog[]>([]);
 const typeService = ref<Catalog>();
-const statusList = ref<Status[]>([{
-  code: 'true',
-  name: 'Activo',
-},
-{
-  code: 'false',
-  name: 'Inactivo',
-}]);
-const status = ref<Status>();
 
 const btnName = ref('Agregar producto');
 const props = defineProps({
@@ -139,23 +127,25 @@ const formState = reactive({
   productDescription: '',
   productPrice: '',
   productCategory: '',
-  productStatus: '',
+  productStatus: false,
   productObservation: '',
 });
 
 const rules = computed(() => ({
   productName: {
     required: helpers.withMessage('Nombre del producto es obligatorio', required),
+    minLength: helpers.withMessage(`Mínimo de caracteres es 10`, minLength(10)),
     maxLength: helpers.withMessage(`Máximo de caracteres es 100`, maxLength(100)),
   },
   productPrice: {
     minValue: helpers.withMessage(`El valor mínimo es 0.01`, minValue('0.01')),
   },
+  productStatus: {},
 }));
 
 const v$ = useVuelidate(rules, formState, { $autoDirty: true });
 
-const btnAcceptDisable = computed(() => v$.value.$invalid);
+const btnAcceptDisable = computed(() => v$.value.$invalid || (typeService.value?.id ?? 0) <= 0);
 
 const handleSubmit = async () => {
   loadingButton.value = true;
@@ -172,7 +162,7 @@ const handleSubmit = async () => {
       typeService: {
         id: typeService?.value?.id,
       },
-      active: Boolean(status.value?.code),
+      active: formState.productStatus,
     };
     if (+props.id > 0) {
       product.id = +props.id;
@@ -229,7 +219,7 @@ const mounted = async () => {
           formState.productName = product.name!;
           formState.productPrice = `${product.price!}`;
           typeService.value = product.typeService;
-          status.value = statusList.value.find((s) => Boolean(s.code) === product.active);
+          formState.productStatus = product.active!;
           btnName.value = 'Editar producto';
         }
       }
