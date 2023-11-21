@@ -142,7 +142,14 @@
                       </div>
                     </div>
                     <div class="ml-4">
-                      <div class="font-medium text-gray-900">{{ `${row.product?.name}` }}</div>
+                      <div class="flex font-medium text-gray-900">
+                        {{ `${row.product?.name}` }}
+                        <a
+                            class="ml-2"
+                            v-on:click="remoteProduct(i)">
+                          <TrashIcon class="h-5 w-5 text-blue-600"/>
+                        </a>
+                      </div>
                       <div class="mt-1 text-gray-500">{{ `${row.product?.typeService?.name}` }}</div>
                     </div>
                   </div>
@@ -257,6 +264,9 @@ import {
 } from 'vue';
 import { useToast } from 'vue-toastification';
 import Decimal from 'decimal.js';
+import {
+  TrashIcon,
+} from '@heroicons/vue/outline';
 import { createAlert } from '@/ui/plugins/alert';
 // eslint-disable-next-line import/no-cycle
 import router from '@/router';
@@ -417,6 +427,11 @@ const calculateTotal = () => {
 
 const calculateProduct = () => {
   calculateTotal();
+};
+
+const remoteProduct = (index) => {
+  quotationDetail.value.splice(index, 1);
+  calculateProduct();
 };
 
 const handleSubmit = async () => {
