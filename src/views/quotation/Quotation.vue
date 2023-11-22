@@ -353,7 +353,7 @@ const selectClient = (item) => {
   clientName.value = `${item.name} ${item.fatherLastName} ${item.motherLastName}`;
 
   VehiclesAPI.ListByClient(item.id).then((data) => {
-    vehicleList.value = data;
+    vehicleList.value = data.filter((v) => v.active);
   });
 };
 
@@ -362,8 +362,9 @@ const getClientList = () => {
     return;
   }
 
-  filterClientList.value = clientList.value?.filter((c) => `${c.nie}`.toUpperCase().includes(`${clientName.value}`.toUpperCase())
-      || `${c.name} ${c.fatherLastName} ${c.motherLastName}`.toUpperCase().includes(`${clientName.value}`.toUpperCase()));
+  filterClientList.value = clientList.value?.filter((c) => c.active
+      && (`${c.nie}`.toUpperCase().includes(`${clientName.value}`.toUpperCase())
+      || `${c.name} ${c.fatherLastName} ${c.motherLastName}`.toUpperCase().includes(`${clientName.value}`.toUpperCase())));
 };
 
 const selectProduct = (item) => {
@@ -386,8 +387,8 @@ const getProductList = () => {
     return;
   }
 
-  filterProductList.value = productList.value?.filter((c) => `${c.name} ${c.typeService?.name ?? ''}`
-    .toUpperCase().includes(`${productName.value}`.toUpperCase()));
+  filterProductList.value = productList.value?.filter((c) => c.active && (`${c.name} ${c.typeService?.name ?? ''}`
+    .toUpperCase().includes(`${productName.value}`.toUpperCase())));
 };
 
 const calculateTotal = () => {

@@ -81,7 +81,7 @@
             </td>
             <td class="px-6 py-2 text-left text-xs whitespace-nowrap">
               <div class="text-sm font-medium">
-                {{ `${row.name} ${row.motherLastName} ${row.fatherLastName}` }}
+                {{ row.typeNie === 'RUC' ? `${row.companyName}` : `${row.name} ${row.motherLastName} ${row.fatherLastName}` }}
               </div>
             </td>
             <td class="px-6 py-4 text-left text-xs whitespace-nowrap">

@@ -25,7 +25,7 @@
             <template #messageResult="item">
               <div class="flex-row">
                 <div class="mt-1">{{ `${item.item.typeNie}: ${item.item.nie}` }}</div>
-                {{ `NOMBRE: ${item.item.name} ${item.item.fatherLastName} ${item.item.motherLastName}`}}
+                {{ `NOMBRE: ${item.item.name} ${item.item.fatherLastName} ${item.item.motherLastName}` }}
               </div>
             </template>
           </Autocomplete>
@@ -266,8 +266,9 @@ const getClientList = () => {
     return;
   }
 
-  filterClientList.value = clientList.value?.filter((c) => `${c.nie}`.toUpperCase().includes(`${clientName.value}`.toUpperCase())
-      || `${c.name} ${c.fatherLastName} ${c.motherLastName}`.toUpperCase().includes(`${clientName.value}`.toUpperCase()));
+  filterClientList.value = clientList.value?.filter((c) => c.active
+      && (`${c.nie}`.toUpperCase().includes(`${clientName.value}`.toUpperCase())
+      || `${c.name} ${c.fatherLastName} ${c.motherLastName}`.toUpperCase().includes(`${clientName.value}`.toUpperCase())));
 };
 
 const handleSubmit = async () => {

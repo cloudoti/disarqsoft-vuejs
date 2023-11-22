@@ -398,6 +398,9 @@ const selectQuotation = (item: Quotation) => {
 
   // eslint-disable-next-line no-unused-expressions
   item.detail?.forEach((quo) => {
+    // eslint-disable-next-line no-param-reassign
+    quo.quantity = +parseFloat(`${quo.quantity}`).toFixed(0);
+    console.log(quo.quantity);
     orderDetail.value.push({
       product: quo.product,
       igv: quo.igv,
@@ -406,6 +409,8 @@ const selectQuotation = (item: Quotation) => {
       total: quo.total,
     });
   });
+  // eslint-disable-next-line no-use-before-define
+  calculateProduct();
 };
 
 const matchQuotations = (text: string, c: Quotation): boolean => `${c.id}`.toUpperCase().includes(`${text}`.toUpperCase())
@@ -420,8 +425,8 @@ const selectProduct = (item) => {
   productName.value = '';
 };
 
-const matchProducts = (text: string, c: Product) => `${c.name} ${c.typeService?.name ?? ''}`
-  .toUpperCase().includes(`${productName.value}`.toUpperCase());
+const matchProducts = (text: string, c: Product) => c.active && (`${c.name} ${c.typeService?.name ?? ''}`
+  .toUpperCase().includes(`${productName.value}`.toUpperCase()));
 
 const calculateTotal = () => {
   let st = 0;

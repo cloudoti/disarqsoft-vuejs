@@ -154,7 +154,7 @@ let filters: PaginatedSearch;
 
 const mounted = async (dataSearch: PaginatedSearch) => {
   loading.value = true;
-  pagination.value = await OrdersAPI.List();
+  pagination.value = await OrdersAPI.List(dataSearch.search);
   loading.value = false;
 };
 
