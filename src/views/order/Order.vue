@@ -14,7 +14,7 @@
             <div class="col-span-2">
               <Autocomplete
                   label="Cotizacion"
-                  placeholder="Cotización (código, cliente ó vehículo)"
+                  placeholder="Cotización (código ó cliente)"
                   v-bind:suggestions="quotationList"
                   v-model="quotationName"
                   v-bind:selected-item="selectQuotation"
@@ -24,7 +24,13 @@
                   :debounce="500"
               >
                 <template #messageResult="item">
-                  {{ `COT-${item.item.id} -> ${item.item.client?.name} ${item.item.client?.fatherLastName} ${item.item.client?.motherLastName}` }}
+                  <div class="flex-row">
+                    <div class="mt-1">{{ `COT-${item.item.id}` }}</div>
+                    <div class="mt-1">{{ `${item.item.client?.typeNie}: ${item.item.client?.nie}` }}</div>
+                    {{
+                      `NOMBRE: ${item.item.client?.name} ${item.item.client?.fatherLastName} ${item.item.client?.motherLastName}`
+                    }}
+                  </div>
                 </template>
               </Autocomplete>
             </div>
@@ -32,30 +38,26 @@
               <Input
                   type="date"
                   autocomplete="off"
-                  v-model="warrantyDate"
+                  label="Límite de garantía"
+                  v-model="v$.orderWarranty.$model"
+                  :required="true"
                   :hide-optional="true"
+                  :errors="v$.orderWarranty.$errors"
               />
             </div>
           </div>
         </div>
-        <div class="px-5 sm:px-8 lg:px-10 py-5">
+        <div
+            v-if="client.id > 0"
+            class="px-5 sm:px-8 lg:px-10 py-5">
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <Autocomplete
-                  label="Cliente"
-                  placeholder="Cliente (nombre ó documento)"
-                  v-bind:suggestions="clientList"
-                  v-model="clientName"
-                  v-bind:selected-item="selectClient"
-                  :match="matchClients"
-                  :required="true"
-                  :show-empty-result="false"
-                  :debounce="500"
-              >
-                <template #messageResult="item">
-                  {{ item.item.name }}
-                </template>
-              </Autocomplete>
+              <Input
+                  autocomplete="off"
+                  v-model="client.name"
+                  :disabled="true"
+                  :hide-optional="true"
+              />
             </div>
             <div>
               <Input
@@ -85,20 +87,17 @@
             </div>
           </div>
         </div>
-        <div class="px-5 sm:px-8 lg:px-10 py-5">
+        <div
+            v-if="vehicle.id > 0"
+            class="px-5 sm:px-8 lg:px-10 py-5">
           <div class="grid grid-cols-4 gap-4">
             <div>
-              <Select
-                  label="Vehículos"
-                  name="vehicleSelect"
-                  v-model="vehicle"
-                  :required="true"
-                  :options="vehicleList"
-              >
-                <template #optionContent="item">
-                  {{ item.item.model }} {{ item.item.vehicleRegistration }}
-                </template>
-              </Select>
+              <Input
+                  autocomplete="off"
+                  v-model="vehicle.vehicleRegistration"
+                  :disabled="true"
+                  :hide-optional="true"
+              />
             </div>
             <div>
               <Input
@@ -168,7 +167,14 @@
                       </div>
                     </div>
                     <div class="ml-4">
-                      <div class="font-medium text-gray-900">{{ `${row.product?.name}` }}</div>
+                      <div class="flex font-medium text-gray-900">
+                        {{ `${row.product?.name}` }}
+                        <a
+                            class="ml-2"
+                            v-on:click="removeProduct(i)">
+                          <TrashIcon class="h-5 w-5 text-blue-600"/>
+                        </a>
+                      </div>
                       <div class="mt-1 text-gray-500">{{ `${row.product?.typeService?.name}` }}</div>
                     </div>
                   </div>
@@ -280,9 +286,14 @@ import {
   computed, defineProps, reactive, ref,
 } from 'vue';
 import { useToast } from 'vue-toastification';
-import { helpers, maxLength, required } from '@vuelidate/validators';
+import {
+  helpers, maxLength, minLength, required,
+} from '@vuelidate/validators';
 import { useVuelidate } from '@vuelidate/core';
 import Decimal from 'decimal.js';
+import {
+  TrashIcon,
+} from '@heroicons/vue/outline';
 import { createAlert } from '@/ui/plugins/alert';
 // eslint-disable-next-line import/no-cycle
 import router from '@/router';
@@ -290,10 +301,7 @@ import BreadCrumb from '@/ui/components/BreadCrumb.vue';
 import Loading from '@/ui/components/Loading.vue';
 import Input from '@/ui/components/Input.vue';
 import Autocomplete from '@/ui/components/Autocomplete.vue';
-import ClientsAPI from '@/data/api/ClientsAPI';
-import VehiclesAPI from '@/data/api/VehiclesAPI';
 import ProductsAPI from '@/data/api/ProductsAPI';
-import Select from '@/ui/components/Select.vue';
 import Vehicle from '@/data/entity/Vehicle';
 import Product from '@/data/entity/Product';
 import Client from '@/data/entity/Client';
@@ -312,18 +320,13 @@ const alert = createAlert();
 const loadingProduct = ref(false);
 const loadingButton = ref(false);
 
-const vehicleList = ref<Vehicle[]>([]);
 const vehicle = ref<Vehicle>({});
 
 const warrantyDate = ref('');
 
-const clientName = ref('');
 const client = ref<Client>({});
 
-const clientList = ref<Client[]>();
-
 const productName = ref('');
-const product = ref<Product>({});
 
 const productList = ref<Product[]>();
 
@@ -358,30 +361,56 @@ const props = defineProps({
   },
 });
 
-const formState = reactive({});
+const formState = reactive({
+  orderWarranty: '',
+});
 
-const rules = computed(() => ({}));
+const rules = computed(() => ({
+  orderWarranty: {
+    required: helpers.withMessage('Fecha de garantía es obligatorio', required),
+  },
+}));
 
 const v$ = useVuelidate(rules, formState, { $autoDirty: true });
 
-const btnAcceptDisable = computed(() => v$.value.$invalid);
+const checkIsNumber = (value) => {
+  const numericRegex = /^[0-9]*$/;
 
-const selectClient = (item) => {
-  client.value = item;
-  clientName.value = `${item.name} ${item.fatherLastName} ${item.motherLastName}`;
+  const isNumber = value && numericRegex.test(`${value}`);
+
+  return isNumber && +value > 0;
 };
 
-const matchClients = (text: string, c: Client): boolean => `${c.nie}`.toUpperCase().includes(`${clientName.value}`.toUpperCase())
-      || `${c.name} ${c.fatherLastName} ${c.motherLastName}`.toUpperCase().includes(`${clientName.value}`.toUpperCase());
+const btnAcceptDisable = computed(() => {
+  console.log('v$.value.$invalid', v$.value.$invalid, 'orderDetail.value', orderDetail.value);
+
+  return v$.value.$invalid
+      || !orderDetail.value || orderDetail.value.length === 0
+      || orderDetail.value.some((v) => !checkIsNumber(`${v.quantity ?? '0'}`));
+});
 
 const selectQuotation = (item: Quotation) => {
   quotation.value = item;
   quotationName.value = `${item.id} - ${item.client?.name} ${item.client?.fatherLastName} ${item.client?.motherLastName}`;
+
+  client.value = item.client!;
+  vehicle.value = item.vehicle!;
+
+  // eslint-disable-next-line no-unused-expressions
+  item.detail?.forEach((quo) => {
+    orderDetail.value.push({
+      product: quo.product,
+      igv: quo.igv,
+      price: quo.price,
+      quantity: quo.quantity,
+      total: quo.total,
+    });
+  });
 };
 
 const matchQuotations = (text: string, c: Quotation): boolean => `${c.id}`.toUpperCase().includes(`${text}`.toUpperCase())
-  // eslint-disable-next-line vue/max-len
-  || `${c.client?.name} ${c.client?.fatherLastName} ${c.client?.motherLastName}`.toUpperCase().includes(`${text}`.toUpperCase());
+    // eslint-disable-next-line vue/max-len
+    || `${c.client?.name} ${c.client?.fatherLastName} ${c.client?.motherLastName}`.toUpperCase().includes(`${text}`.toUpperCase());
 
 const selectProduct = (item) => {
   const detail = new QuotationDetail();
@@ -430,6 +459,11 @@ const calculateProduct = () => {
   calculateTotal();
 };
 
+const removeProduct = (index) => {
+  orderDetail.value.splice(index, 1);
+  calculateProduct();
+};
+
 const handleSubmit = async () => {
   loadingButton.value = true;
 
@@ -452,7 +486,7 @@ const handleSubmit = async () => {
       price: subtotal.value,
       igv: igv.value,
       total: total.value,
-      warrantyDate: new Date(warrantyDate.value),
+      warrantyDate: new Date(formState.orderWarranty),
       detail: [],
     };
     orderDetail.value.forEach((d) => {
@@ -483,17 +517,13 @@ const mounted = async () => {
   const promises: Promise<any>[] = [];
 
   promises.push(QuotationsAPI.List());
-  promises.push(ClientsAPI.List());
-  promises.push(VehiclesAPI.List());
   promises.push(ProductsAPI.ListPatient());
 
   Promise.all(promises)
     .then((values) => {
-      const [quotations, clients, vehicles, products] = values;
+      const [quotations, products] = values;
       // Se obtiene el resultado de la primera promesa
       quotationList.value = quotations;
-      clientList.value = clients;
-      vehicleList.value = vehicles;
       productList.value = products;
     })
     .catch(() => {

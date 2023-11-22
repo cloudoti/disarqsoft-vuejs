@@ -10,9 +10,8 @@ class OrdersAPI extends BaseApi {
     this.url = 'order';
   }
 
-  getWorkTrayOrderById = async (workTrayOrderMinimumDate: number, workTrayOrderId: number): Promise<WorkTrayOrderDetail> => {
-    const response = await
-    api.get<WorkTrayOrderDetail>(`/${this.url}/work-tray-order-detail/${workTrayOrderMinimumDate}/${workTrayOrderId}`);
+  GetById = async (id: number): Promise<any> => {
+    const response = await api.get<any>(`/${this.url}/${id}`);
     return (response && response.data) || null;
   };
 

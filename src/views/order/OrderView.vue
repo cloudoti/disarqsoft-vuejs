@@ -4,13 +4,13 @@
       <div
           id="print"
           class="mt-10"
-          v-if="!loadingProduct && quotation.id">
+          v-if="!loadingProduct && order.id">
         <div class="px-4 sm:px-6 lg:px-8">
           <div class="sm:flex sm:items-center">
             <div class="sm:flex-auto">
-              <h1 class="text-base font-semibold leading-6 text-gray-900">Cotización: {{getNumber(quotation.id)}}</h1>
+              <h1 class="text-base font-semibold leading-6 text-gray-900">Orden: {{getNumber(order.id)}}</h1>
               <p class="mt-2 text-sm text-gray-700">Grabada el
-                <time>{{ quotation.issueDate}}</time>
+                <time>{{ order.issueDate }}</time>
                 .
               </p>
             </div>
@@ -20,7 +20,7 @@
               <h2 class="text-base font-semibold leading-6 text-gray-900">Cliente</h2>
               <p class="mt-2 text-sm text-gray-700">
                 <span>{{
-                    `${quotation.client.name} ${quotation.client.fatherLastName} ${quotation.client.motherLastName}`
+                    `${order.client.name} ${order.client.fatherLastName} ${order.client.motherLastName}`
                   }}</span>.
               </p>
             </div>
@@ -30,7 +30,7 @@
               <h2 class="text-base font-semibold leading-6 text-gray-900">Vehículo</h2>
               <p class="mt-2 text-sm text-gray-700">
                 <span>{{
-                    `${quotation.vehicle.vehicleRegistration} ${quotation.vehicle.type} ${quotation.vehicle.model}`
+                    `${order.vehicle.vehicleRegistration} ${order.vehicle.type} ${order.vehicle.model}`
                   }}</span>.
               </p>
             </div>
@@ -67,18 +67,24 @@
               <tbody>
               <tr
                   class="border-b border-gray-200"
-                  v-for="(row) in quotation.detail"
+                  v-for="(row) in order.detail"
                   :key="row.id">
                 <td class="max-w-0 py-5 pl-4 pr-3 text-sm sm:pl-0">
                   <div class="font-medium text-gray-900">
                     {{ `${row.product?.name}` }}
                     <span class="text-gray-500">(S/ {{ `${row.price}` }})</span>
                   </div>
-                    <div class="mt-1 truncate text-gray-500">{{ `${row?.product?.typeService?.name??''}` }}</div>
+                  <div class="mt-1 truncate text-gray-500">{{ `${row?.product?.typeService?.name ?? ''}` }}</div>
                 </td>
-                <td class="hidden px-3 py-5 text-right text-sm text-gray-500 sm:table-cell">S/ {{ `${row?.quantity??'0.00'}` }}</td>
-                <td class="hidden px-3 py-5 text-right text-sm text-gray-500 sm:table-cell">S/ {{ `${row?.igv??'0.00'}` }}</td>
-                <td class="py-5 pl-3 pr-4 text-right text-sm text-gray-500 sm:pr-0">S/ {{ parseFloat(`${row?.total??'0.00'}`) - parseFloat(`${row?.igv??'0.00'}`) }}</td>
+                <td class="hidden px-3 py-5 text-right text-sm text-gray-500 sm:table-cell">S/
+                  {{ `${row?.quantity ?? '0.00'}` }}
+                </td>
+                <td class="hidden px-3 py-5 text-right text-sm text-gray-500 sm:table-cell">S/
+                  {{ `${row?.igv ?? '0.00'}` }}
+                </td>
+                <td class="py-5 pl-3 pr-4 text-right text-sm text-gray-500 sm:pr-0">S/
+                  {{ parseFloat(`${row?.total ?? '0.00'}`) - parseFloat(`${row?.igv ?? '0.00'}`) }}
+                </td>
               </tr>
 
               </tbody>
@@ -87,7 +93,8 @@
                 <th
                     scope="row"
                     colspan="3"
-                    class="hidden pl-4 pr-3 pt-4 text-right text-sm font-normal text-gray-500 sm:table-cell sm:pl-0">Sub Total
+                    class="hidden pl-4 pr-3 pt-4 text-right text-sm font-normal text-gray-500 sm:table-cell sm:pl-0">Sub
+                  Total
                 </th>
                 <th
                     scope="row"
@@ -105,7 +112,10 @@
                     scope="row"
                     class="pl-4 pr-3 pt-4 text-left text-sm font-normal text-gray-500 sm:hidden">IGV
                 </th>
-                <td class="pl-3 pr-4 pt-4 text-right text-sm text-gray-500 sm:pr-0">S/ {{ `${quotation?.igv??'0.00'}` }}</td>
+                <td class="pl-3 pr-4 pt-4 text-right text-sm text-gray-500 sm:pr-0">S/ {{
+                    `${order?.igv ?? '0.00'}`
+                  }}
+                </td>
               </tr>
               <tr>
                 <th
@@ -118,7 +128,9 @@
                     scope="row"
                     class="pl-4 pr-3 pt-4 text-left text-sm font-semibold text-gray-900 sm:hidden">Total
                 </th>
-                <td class="pl-3 pr-4 pt-4 text-right text-sm font-semibold text-gray-900 sm:pr-0">S/ {{ `${quotation?.total??'0.00'}` }}</td>
+                <td class="pl-3 pr-4 pt-4 text-right text-sm font-semibold text-gray-900 sm:pr-0">S/
+                  {{ `${order?.total ?? '0.00'}` }}
+                </td>
               </tr>
               </tfoot>
             </table>
@@ -141,15 +153,15 @@ import {
 import { useToast } from 'vue-toastification';
 import html2pdf from 'html2pdf.js';
 // eslint-disable-next-line import/no-cycle
-import Quotation from '@/data/entity/Quotation';
-import QuotationsAPI from '@/data/api/QuotationsAPI';
+import Order from '@/data/entity/Order';
 import Button from '@/ui/components/Button.vue';
+import OrdersAPI from '@/data/api/OrdersAPI';
 
 const toast = useToast();
 
 const loadingProduct = ref(false);
 
-const quotation = ref<Quotation>({});
+const order = ref<Order>({});
 
 const subTotal = ref(0.00);
 
@@ -172,24 +184,24 @@ const props = defineProps({
   },
 });
 
-const getNumber = (number) => `COT-${`${number}`.padStart(8, '0')}`;
+const getNumber = (number) => `ORD-${`${number}`.padStart(8, '0')}`;
 
 const handleSubmit = async () => {
-  html2pdf(document.getElementById('print'), { margin: 1, filename: `${getNumber(quotation.value.id)}.pdf` });
+  html2pdf(document.getElementById('print'), { margin: 1, filename: `${getNumber(order.value.id)}.pdf` });
 };
 
 const mounted = async () => {
   loadingProduct.value = true;
   const promises: Promise<any>[] = [];
 
-  promises.push(QuotationsAPI.GetById(+props.id));
+  promises.push(OrdersAPI.GetById(+props.id));
 
   Promise.all(promises)
     .then((values) => {
       const [q] = values;
       // Se obtiene el resultado de la primera promesa
 
-      quotation.value = q;
+      order.value = q;
       subTotal.value = q.total - q.igv;
     })
     .catch(() => {

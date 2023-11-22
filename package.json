@@ -24,6 +24,7 @@
     "core-js": "^3.6.5",
     "dayjs": "^1.10.7",
     "decimal.js": "^10.4.3",
+    "html2pdf.js": "^0.10.1",
     "litepie-datepicker": "^1.0.14",
     "maska": "^1.4.6",
     "postcss": "^7",

@@ -121,7 +121,7 @@
       :model-value="open"
       :close="closeModal"
       :dismissible="true">
-    <QuotationView :id="`${orderId}`"/>
+    <OrderView :id="`${orderId}`"/>
   </Modal>
 </template>
 
@@ -135,7 +135,7 @@ import ERouteType from '@/router/ERouteType';
 import Input from '@/ui/components/Input.vue';
 import PaginatedSearch from '@/data/entity/PaginatedSearch';
 import OrdersAPI from '@/data/api/OrdersAPI';
-import QuotationView from '@/views/quotation/QuotationView.vue';
+import OrderView from '@/views/order/OrderView.vue';
 import Button from '@/ui/components/Button.vue';
 import Modal from '@/ui/components/Modal.vue';
 import Order from '@/data/entity/Order';
