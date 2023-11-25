@@ -53,13 +53,12 @@ import ERouteType from '@/router/ERouteType';
 
 const {
   auth,
-  logOut,
 } = inject<Store>('store', {});
 
-let userOptions: any[] = [];
+let userOptions = 0;
 
 if (auth?.authenticate) {
-  userOptions = auth.roles!;
+  userOptions = auth.role!;
 }
 
 const navigation = ref([
@@ -68,28 +67,28 @@ const navigation = ref([
     href: ERouteType.USER_PATH,
     icon: IdentificationIcon,
     current: false,
-    show: global.isSuperAdmin(),
+    show: global.isAdmin(),
   },
   {
     name: 'Productos',
     href: ERouteType.PRODUCT_PATH,
     icon: GiftIcon,
     current: false,
-    show: global.isConfigBusiness(),
+    show: global.isAdmin(),
   },
   {
     name: 'Clientes',
     href: ERouteType.CLIENT_PATH,
     icon: UsersIcon,
     current: false,
-    show: global.isConfigBusiness(),
+    show: global.isAdvise(),
   },
   {
     name: 'Vehículos',
     href: ERouteType.VEHICLE_PATH,
     icon: CubeTransparentIcon,
     current: false,
-    show: global.isConfigBusiness(),
+    show: global.isAdvise(),
   },
 ]);
 

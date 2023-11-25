@@ -97,12 +97,10 @@ const {
 } = inject<Store>('store', {});
 
 if (auth?.authenticate) {
-  if (global.isSuperAdmin()) {
+  if (global.isAdmin()) {
     router.push(ERouteType.USER_PATH);
-  } else if (global.isAdmin()) {
-    router.push(ERouteType.USER_PATH);
-  } else if (global.isConfigBusiness()) {
-    router.push(ERouteType.PRODUCT_PATH);
+  } else if (global.isAdvise()) {
+    router.push(ERouteType.QUOTATION_PATH);
   }
 }
 

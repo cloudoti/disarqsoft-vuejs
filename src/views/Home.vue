@@ -25,7 +25,7 @@ export default defineComponent({
       auth,
     } = inject<Store>('store', {});
 
-    const rolesUser = auth?.roles || [];
+    const rolesUser = auth?.role || 0;
 
     if (!auth?.authenticate) {
       router.push('/login');
@@ -35,17 +35,12 @@ export default defineComponent({
       return;
     }
 
-    if (rolesUser.some((role) => [ERolesType.REGISTER_ORDERS].includes(role))) {
+    if (rolesUser === ERolesType.ADVISE) {
       router.push(ERouteType.ORDER_PATH);
       return;
     }
 
-    if (rolesUser.some((role) => [ERolesType.CONFIG_BUSINESS].includes(role))) {
-      router.push(ERouteType.PRODUCT_PATH);
-      return;
-    }
-
-    if (rolesUser.some((role) => [ERolesType.SUPER_ADMIN].includes(role))) {
+    if (rolesUser === ERolesType.ADMIN) {
       router.push(ERouteType.USER_PATH);
     }
   },

@@ -124,7 +124,7 @@
           aria-label="Global">
           <div class="max-w-3xl mx-auto px-2 pt-2 pb-3 space-y-1 sm:px-4">
             <span
-              v-for="item in appNavigation"
+              v-for="item in appNavigation.filter((n) => n.show)"
               :key="item.name"
             >
               <router-link
@@ -222,9 +222,9 @@ const {
   logOut,
 } = inject<Store>('store', {});
 
-let userOptions: any[] = [];
+let userOptions = 0;
 if (auth?.authenticate) {
-  userOptions = auth.roles!;
+  userOptions = auth.role!;
 }
 
 const open = ref(false);
@@ -244,14 +244,14 @@ const appNavigation = ref([
     href: '/cotizaciones',
     icon: CalculatorIcon,
     current: false,
-    show: true,
+    show: global.isAdvise(),
   },
   {
     name: 'Ordenes',
     href: '/ordenes',
     icon: DocumentAddIcon,
     current: false,
-    show: true,
+    show: global.isAdvise(),
   },
 ]);
 
@@ -259,8 +259,8 @@ const userNavigation = [
   {
     name: 'Configuraciones',
     // eslint-disable-next-line no-use-before-define
-    href: ERouteType.USER_PATH,
-    show: global.isSuperAdmin() || global.isConfigBusiness(),
+    href: global.isAdmin() ? ERouteType.USER_PATH : ERouteType.CLIENT_PATH,
+    show: global.isAdmin() || global.isAdvise(),
   },
 ];
 

@@ -59,10 +59,10 @@ const {
   logOut,
 } = inject<Store>('store', {});
 
-let userOptions: any[] = [];
+let userOptions = 0;
 
 if (auth?.authenticate) {
-  userOptions = auth.roles!;
+  userOptions = auth.role!;
 }
 
 const navigation = ref([

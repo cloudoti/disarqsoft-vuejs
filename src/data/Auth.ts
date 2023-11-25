@@ -2,28 +2,22 @@ export default class Auth {
   authenticate = false;
 
   user?: {
-    companyId: number, userId: number, name: string,
-    username: string, image: string, timeZone: string
+    username: string, sub: number
   };
 
   token?: string;
 
-  roles?: string[];
-
-  userType?: { id: number, name: string };
+  role?: number;
 
   constructor(authenticate: boolean,
     user?: {
-      companyId: number; userId: number; name: string;
-      username: string; image: string; timeZone: string
+      username: string; sub: number
     },
     token?: string,
-    roles?: string[],
-    userType?: { id: number, name: string }) {
+    role?: number) {
     this.authenticate = authenticate;
     this.user = user;
     this.token = token;
-    this.roles = roles;
-    this.userType = userType;
+    this.role = role;
   }
 }

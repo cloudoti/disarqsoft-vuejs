@@ -13,9 +13,7 @@ const loggedIn = (username, token) => {
   auth.user = JSON.parse(atob(data));
   auth.user.username = username;
   auth.token = token;
-
-  // ERolesType.CONFIG_BUSINESS
-  auth.roles = [ERolesType.CONFIG_BUSINESS, ERolesType.REGISTER_ORDERS, ERolesType.SUPER_ADMIN];
+  auth.role = auth.user.role;
 
   localStorage.setItem('auth', JSON.stringify(auth));
 };
@@ -27,21 +25,16 @@ const logOut = () => {
 
   localStorage.clear();
 };
-let userOptions: any[] = [];
 
-if (auth?.authenticate) {
-  userOptions = auth.roles!;
-}
-
-const isSuperAdmin = () => userOptions.includes('SUPER_ADMIN');
-const isAdmin = () => userOptions.includes('ADMIN');
-const isConfigBusiness = () => userOptions.includes('CONFIGURACION_DEL_NEGOCIO');
+const isAdmin = () => auth.role === ERolesType.ADMIN;
+const isAsistant = () => auth.role === ERolesType.ASISTANT;
+const isAdvise = () => auth.role === ERolesType.ADVISE;
 
 export default {
   auth: readonly(auth),
   loggedIn,
   logOut,
-  isSuperAdmin,
   isAdmin,
-  isConfigBusiness,
+  isAsistant,
+  isAdvise,
 };

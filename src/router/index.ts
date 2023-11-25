@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import Home from '@/views/Home.vue';
-import WorkTray from '@/views/workTray/WorkTray.vue';
 import Order from '@/views/order/Order.vue';
 import Product from '@/views/setting/product/Product.vue';
 import ProductList from '@/views/setting/product/ProductList.vue';
@@ -19,7 +18,7 @@ import Quotation from '@/views/quotation/Quotation.vue';
 import QuotationList from '@/views/quotation/QuotationList.vue';
 import OrderList from '@/views/order/OrderList.vue';
 
-const rolesUser = Storage.auth.roles === undefined ? [] : Storage.auth.roles;
+const rolesUser = Storage.auth.role === undefined ? 0 : Storage.auth.role;
 
 const childConfiguration = [
   {
@@ -91,58 +90,58 @@ const childConfiguration = [
 const fnChildConfiguration = (x) => {
   let valid = false;
 
-  if (x.path === ERouteType.PRODUCT_PATH && rolesUser.includes(ERolesType.CONFIG_BUSINESS)) {
+  if (x.path === ERouteType.USER_PATH && rolesUser === ERolesType.ADMIN) {
     valid = true;
   }
 
-  if (x.path === ERouteType.NEW_PRODUCT_PATH && rolesUser.includes(ERolesType.CONFIG_BUSINESS)) {
+  if (x.path === ERouteType.NEW_USER_PATH && rolesUser === ERolesType.ADMIN) {
     valid = true;
   }
 
-  if (x.path === ERouteType.EDIT_PRODUCT_PATH && rolesUser.includes(ERolesType.CONFIG_BUSINESS)) {
+  if (x.path === ERouteType.EDIT_USER_PATH && rolesUser === ERolesType.ADMIN) {
     valid = true;
   }
 
-  if (x.path === ERouteType.USER_PATH && rolesUser.includes(ERolesType.SUPER_ADMIN)) {
+  if (x.path === ERouteType.PRODUCT_PATH && rolesUser === ERolesType.ADMIN) {
     valid = true;
   }
 
-  if (x.path === ERouteType.NEW_USER_PATH && rolesUser.includes(ERolesType.SUPER_ADMIN)) {
+  if (x.path === ERouteType.NEW_PRODUCT_PATH && rolesUser === ERolesType.ADMIN) {
     valid = true;
   }
 
-  if (x.path === ERouteType.EDIT_USER_PATH && rolesUser.includes(ERolesType.SUPER_ADMIN)) {
+  if (x.path === ERouteType.EDIT_PRODUCT_PATH && rolesUser === ERolesType.ADMIN) {
     valid = true;
   }
 
-  if (x.path === ERouteType.CLIENT_PATH && rolesUser.includes(ERolesType.SUPER_ADMIN)) {
+  if (x.path === ERouteType.CLIENT_PATH && rolesUser === ERolesType.ADVISE) {
     valid = true;
   }
 
-  if (x.path === ERouteType.NEW_CLIENT_PATH && rolesUser.includes(ERolesType.SUPER_ADMIN)) {
+  if (x.path === ERouteType.NEW_CLIENT_PATH && rolesUser === ERolesType.ADVISE) {
     valid = true;
   }
 
-  if (x.path === ERouteType.EDIT_CLIENT_PATH && rolesUser.includes(ERolesType.SUPER_ADMIN)) {
+  if (x.path === ERouteType.EDIT_CLIENT_PATH && rolesUser === ERolesType.ADVISE) {
     valid = true;
   }
 
-  if (x.path === ERouteType.VEHICLE_PATH && rolesUser.includes(ERolesType.SUPER_ADMIN)) {
+  if (x.path === ERouteType.VEHICLE_PATH && rolesUser === ERolesType.ADVISE) {
     valid = true;
   }
 
-  if (x.path === ERouteType.NEW_VEHICLE_PATH && rolesUser.includes(ERolesType.SUPER_ADMIN)) {
+  if (x.path === ERouteType.NEW_VEHICLE_PATH && rolesUser === ERolesType.ADVISE) {
     valid = true;
   }
 
-  if (x.path === ERouteType.EDIT_VEHICLE_PATH && rolesUser.includes(ERolesType.SUPER_ADMIN)) {
+  if (x.path === ERouteType.EDIT_VEHICLE_PATH && rolesUser === ERolesType.ADVISE) {
     valid = true;
   }
 
   return valid;
 };
 
-const fnChildAccount = (x) => {
+/* const fnChildAccount = (x) => {
   let valid = false;
 
   if (x.path === ERouteType.USER_LABORATORY_PATH
@@ -161,7 +160,7 @@ const fnChildAccount = (x) => {
   }
 
   return valid;
-};
+}; */
 
 const childHome = [
   {
@@ -190,16 +189,16 @@ const fnChildHome = (x) => {
   let valid = false;
 
   if (x.path === ERouteType.ORDER_PATH
-        && rolesUser.some((role) => [ERolesType.REGISTER_ORDERS].includes(role))) {
+        && rolesUser === ERolesType.ADVISE) {
     valid = true;
   } else if (x.path === ERouteType.NEW_ORDER_PATH
-        && rolesUser.some((role) => [ERolesType.REGISTER_ORDERS].includes(role))) {
+        && rolesUser === ERolesType.ADVISE) {
     valid = true;
   } else if (x.path === ERouteType.QUOTATION_PATH
-      && rolesUser.some((role) => [ERolesType.REGISTER_ORDERS].includes(role))) {
+      && rolesUser === ERolesType.ADVISE) {
     valid = true;
   } else if (x.path === ERouteType.NEW_QUOTATION_PATH
-      && rolesUser.some((role) => [ERolesType.REGISTER_ORDERS].includes(role))) {
+      && rolesUser === ERolesType.ADVISE) {
     valid = true;
   }
 
@@ -208,8 +207,7 @@ const fnChildHome = (x) => {
 
 const filterChildHome = childHome.filter(fnChildHome);
 
-if (rolesUser.some((role) => [ERolesType.CONFIG_BUSINESS, ERolesType.SUPER_ADMIN,
-  ERolesType.ADMIN].includes(role))) {
+if ([ERolesType.ADMIN, ERolesType.ADVISE].some((r) => r === rolesUser)) {
   filterChildHome.push({
     path: ERouteType.CONFIGURATIONS_PATH,
     name: ERouteType.CONFIGURATIONS_NAME,
@@ -217,17 +215,6 @@ if (rolesUser.some((role) => [ERolesType.CONFIG_BUSINESS, ERolesType.SUPER_ADMIN
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     children: childConfiguration.filter(fnChildConfiguration),
-  });
-}
-
-if (rolesUser.some((role) => [ERolesType.CONFIG_ACCOUNT, ERolesType.ADMIN].includes(role))) {
-  filterChildHome.push({
-    path: ERouteType.ACCOUNT_PATH,
-    name: ERouteType.ACCOUNT_NAME,
-    component: Account,
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    children: childConfiguration.filter(fnChildAccount),
   });
 }
 
