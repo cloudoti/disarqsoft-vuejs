@@ -27,6 +27,7 @@
     "html2pdf.js": "^0.10.1",
     "litepie-datepicker": "^1.0.14",
     "maska": "^1.4.6",
+    "moment": "^2.29.4",
     "postcss": "^7",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.2",
     "vee-validate": "^4.5.4",

@@ -3,15 +3,14 @@
     <div class="bg-white px-4 shadow p-6 sm:rounded-lg">
       <div
           id="print"
-          class="mt-10"
+          class="mt-10 mb-10"
           v-if="!loadingProduct && order.id">
         <div class="px-4 sm:px-6 lg:px-8">
           <div class="sm:flex sm:items-center">
             <div class="sm:flex-auto">
               <h1 class="text-base font-semibold leading-6 text-gray-900">Orden: {{getNumber(order.id)}}</h1>
               <p class="mt-2 text-sm text-gray-700">Grabada el
-                <time>{{ order.issueDate }}</time>
-                .
+                <time>{{ moment(order.issueDate).format('DD/MM/YYYY hh:mm') }}</time>
               </p>
             </div>
           </div>
@@ -72,7 +71,6 @@
                 <td class="max-w-0 py-5 pl-4 pr-3 text-sm sm:pl-0">
                   <div class="font-medium text-gray-900">
                     {{ `${row.product?.name}` }}
-                    <span class="text-gray-500">(S/ {{ `${row.price}` }})</span>
                   </div>
                   <div class="mt-1 truncate text-gray-500">{{ `${row?.product?.typeService?.name ?? ''}` }}</div>
                 </td>
@@ -100,7 +98,7 @@
                     scope="row"
                     class="pl-4 pr-3 pt-4 text-left text-sm font-normal text-gray-500 sm:hidden">Sub total
                 </th>
-                <td class="pl-3 pr-4 pt-4 text-right text-sm text-gray-500 sm:pr-0">S/ {{ `${subTotal}` }}</td>
+                <td class="pl-3 pr-4 pt-4 text-right text-sm text-gray-500 sm:pr-0">S/ {{ parseFloat(`${subTotal}`).toFixed(2) }}</td>
               </tr>
               <tr>
                 <th
@@ -113,7 +111,7 @@
                     class="pl-4 pr-3 pt-4 text-left text-sm font-normal text-gray-500 sm:hidden">IGV
                 </th>
                 <td class="pl-3 pr-4 pt-4 text-right text-sm text-gray-500 sm:pr-0">S/ {{
-                    `${order?.igv ?? '0.00'}`
+                    parseFloat(`${order?.igv ?? '0.00'}`).toFixed(2)
                   }}
                 </td>
               </tr>
@@ -129,7 +127,7 @@
                     class="pl-4 pr-3 pt-4 text-left text-sm font-semibold text-gray-900 sm:hidden">Total
                 </th>
                 <td class="pl-3 pr-4 pt-4 text-right text-sm font-semibold text-gray-900 sm:pr-0">S/
-                  {{ `${order?.total ?? '0.00'}` }}
+                  {{ parseFloat(`${order?.total ?? '0.00'}`).toFixed(2) }}
                 </td>
               </tr>
               </tfoot>
@@ -153,6 +151,7 @@ import {
 import { useToast } from 'vue-toastification';
 import html2pdf from 'html2pdf.js';
 // eslint-disable-next-line import/no-cycle
+import moment from 'moment';
 import Order from '@/data/entity/Order';
 import Button from '@/ui/components/Button.vue';
 import OrdersAPI from '@/data/api/OrdersAPI';

@@ -3,15 +3,14 @@
     <div class="bg-white px-4 shadow p-6 sm:rounded-lg">
       <div
           id="print"
-          class="mt-10"
+          class="mt-10 mb-10"
           v-if="!loadingProduct && quotation.id">
         <div class="px-4 sm:px-6 lg:px-8">
           <div class="sm:flex sm:items-center">
             <div class="sm:flex-auto">
               <h1 class="text-base font-semibold leading-6 text-gray-900">Cotización: {{getNumber(quotation.id)}}</h1>
               <p class="mt-2 text-sm text-gray-700">Grabada el
-                <time>{{ quotation.issueDate}}</time>
-                .
+                <time>{{ moment(quotation.issueDate).format('DD/MM/YYYY hh:mm')}}</time>
               </p>
             </div>
           </div>
@@ -72,7 +71,6 @@
                 <td class="max-w-0 py-5 pl-4 pr-3 text-sm sm:pl-0">
                   <div class="font-medium text-gray-900">
                     {{ `${row.product?.name}` }}
-                    <span class="text-gray-500">(S/ {{ `${row.price}` }})</span>
                   </div>
                     <div class="mt-1 truncate text-gray-500">{{ `${row?.product?.typeService?.name??''}` }}</div>
                 </td>
@@ -141,6 +139,7 @@ import {
 import { useToast } from 'vue-toastification';
 import html2pdf from 'html2pdf.js';
 // eslint-disable-next-line import/no-cycle
+import moment from 'moment';
 import Quotation from '@/data/entity/Quotation';
 import QuotationsAPI from '@/data/api/QuotationsAPI';
 import Button from '@/ui/components/Button.vue';
